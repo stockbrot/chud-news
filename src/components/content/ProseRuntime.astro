@@ -14,7 +14,8 @@
 ---
 
 <script>
-  document.querySelectorAll<HTMLTableElement>(".prose table").forEach((table) => {
+  const prepareProse = () => {
+    document.querySelectorAll<HTMLTableElement>(".prose table").forEach((table) => {
     if (table.closest(".table-scroll")) return;
 
     const frame = document.createElement("div");
@@ -25,14 +26,17 @@
 
     table.replaceWith(frame);
     frame.append(table);
-  });
+    });
 
-  document.querySelectorAll<HTMLImageElement>(".prose > p > img, .prose > img").forEach((image) => {
+    document.querySelectorAll<HTMLImageElement>(".prose > p > img, .prose > img").forEach((image) => {
     if (image.hasAttribute("data-emote")) return;
     image.dataset.lightbox = "";
     image.dataset.lightboxGroup = "issue";
     image.dataset.lightboxSrc = image.currentSrc || image.src;
     image.dataset.lightboxAlt = image.alt;
     image.style.cursor = "zoom-in";
-  });
+    });
+  };
+
+  document.addEventListener("astro:page-load", prepareProse);
 </script>

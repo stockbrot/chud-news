@@ -48,9 +48,16 @@ import Icon from "@/components/ui/Icon.astro";
 </dialog>
 
 <script>
-  const dialog = document.querySelector<HTMLDialogElement>("[data-lightbox-dialog]");
+  let lightboxController: AbortController | undefined;
 
-  if (dialog && typeof dialog.showModal === "function") {
+  document.addEventListener("astro:page-load", () => {
+    lightboxController?.abort();
+    lightboxController = new AbortController();
+    const { signal } = lightboxController;
+    document.documentElement.classList.remove("has-open-lightbox");
+    const dialog = document.querySelector<HTMLDialogElement>("[data-lightbox-dialog]");
+
+    if (dialog && typeof dialog.showModal === "function") {
     const img = dialog.querySelector<HTMLImageElement>("[data-lightbox-img]")!;
     const text = dialog.querySelector<HTMLElement>("[data-lightbox-text]")!;
     const count = dialog.querySelector<HTMLElement>("[data-lightbox-count]")!;
@@ -102,7 +109,7 @@ import Icon from "@/components/ui/Icon.astro";
       warm(index - 1);
     };
 
-    document.addEventListener("click", (event) => {
+      document.addEventListener("click", (event) => {
       const trigger = (event.target as HTMLElement | null)?.closest<HTMLElement>("[data-lightbox]");
       if (!trigger) return;
       event.preventDefault();
@@ -116,7 +123,7 @@ import Icon from "@/components/ui/Icon.astro";
       show(group.indexOf(trigger));
       dialog.showModal();
       document.documentElement.classList.add("has-open-lightbox");
-    });
+      }, { signal });
 
     prev.addEventListener("click", () => show(index - 1));
     next.addEventListener("click", () => show(index + 1));
@@ -173,5 +180,6 @@ import Icon from "@/components/ui/Icon.astro";
       img.removeAttribute("srcset");
       document.documentElement.classList.remove("has-open-lightbox");
     });
-  }
+    }
+  });
 </script>

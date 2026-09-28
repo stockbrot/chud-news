@@ -94,7 +94,13 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
 <SearchRuntime />
 
 <script>
-  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  let headerController: AbortController | undefined;
+
+  document.addEventListener("astro:page-load", () => {
+    headerController?.abort();
+    headerController = new AbortController();
+    const { signal } = headerController;
+    const header = document.querySelector<HTMLElement>("[data-site-header]");
 
   /* The bar only grows a rule once the page has moved under it, and it only
      hides once the page has scrolled past it — so a short page, or a rubber
@@ -115,7 +121,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
   };
 
   onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true, signal });
 
   const dialog = document.querySelector<HTMLDialogElement>("[data-search-dialog]");
   const input = dialog?.querySelector<HTMLInputElement>("[data-search-input]");
@@ -150,16 +156,18 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
   };
 
   document.querySelectorAll("[data-search-open]").forEach((button) => {
-    button.addEventListener("click", open);
-  });
+      button.addEventListener("click", open, { signal });
+    });
 
-  dialog?.querySelector("[data-search-close]")?.addEventListener("click", () => dialog.close());
-  dialog?.addEventListener("click", (event) => {
-    if (event.target === dialog) dialog.close();
-  });
-  input?.addEventListener("input", () => void render());
+    dialog?.querySelector("[data-search-close]")?.addEventListener("click", () => dialog.close(), {
+      signal,
+    });
+    dialog?.addEventListener("click", (event) => {
+      if (event.target === dialog) dialog.close();
+    }, { signal });
+    input?.addEventListener("input", () => void render(), { signal });
 
-  document.addEventListener("keydown", (event) => {
+    document.addEventListener("keydown", (event) => {
     const target = event.target;
     const editing =
       target instanceof HTMLElement &&
@@ -171,5 +179,6 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     event.preventDefault();
     if (dialog?.open) dialog.close();
     else open();
+    }, { signal });
   });
 </script>

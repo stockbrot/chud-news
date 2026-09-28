@@ -34,8 +34,11 @@ const { title, url } = Astro.props;
   /* The native sheet is offered first, and only where it exists. `canShare`
      rather than `share` alone: some desktop browsers expose `share` and then
      reject every call, which would swallow the click. */
-  document.querySelectorAll<HTMLButtonElement>("[data-share-open]").forEach((button) => {
-    button.addEventListener(
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLButtonElement>("[data-share-open]").forEach((button) => {
+      if (button.dataset.nativeShareReady) return;
+      button.dataset.nativeShareReady = "true";
+      button.addEventListener(
       "click",
       async (event) => {
         const data = {
@@ -54,6 +57,7 @@ const { title, url } = Astro.props;
       },
       { capture: true },
     );
+    });
   });
 </script>
 

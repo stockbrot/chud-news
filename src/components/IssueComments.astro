@@ -45,9 +45,14 @@ const configured = Boolean(repo && repoId && category && categoryId);
 }
 
 <script>
-  const container = document.querySelector<HTMLElement>("[data-comments]");
+  let commentsObserver: MutationObserver | undefined;
 
-  if (container) {
+  document.addEventListener("astro:page-load", () => {
+    commentsObserver?.disconnect();
+    commentsObserver = undefined;
+    const container = document.querySelector<HTMLElement>("[data-comments]");
+
+    if (container && !container.querySelector("script, iframe")) {
     const theme = () =>
       document.documentElement.dataset.theme === "dark" ? "transparent_dark" : "light";
     const script = document.createElement("script");
@@ -79,13 +84,15 @@ const configured = Boolean(repo && repoId && category && categoryId);
         "https://giscus.app",
       );
     };
-    new MutationObserver(syncTheme).observe(document.documentElement, {
+      commentsObserver = new MutationObserver(syncTheme);
+      commentsObserver.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ["data-theme"],
     });
     // Also synchronize if the reader switches themes while the lazy iframe loads.
     container.addEventListener("load", syncTheme, true);
-  }
+    }
+  });
 </script>
 
 <style>

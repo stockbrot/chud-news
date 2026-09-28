@@ -42,8 +42,12 @@ import { siteConfig } from "@/config/site";
       <div data-page-results></div>
     </section>
 
-    <script is:inline>
+    <script is:inline data-astro-rerun>
       (() => {
+        window.mailerSearchPageController?.abort();
+        const controller = new AbortController();
+        window.mailerSearchPageController = controller;
+        const { signal } = controller;
         const form = document.querySelector("[data-page-search]");
         const input = document.querySelector("[data-page-input]");
         const results = document.querySelector("[data-page-results]");
@@ -107,20 +111,20 @@ import { siteConfig } from "@/config/site";
             sync(query, true);
             void render(query);
           }, 160);
-        });
+        }, { signal });
 
         form.addEventListener("submit", (event) => {
           event.preventDefault();
           const query = input.value.trim();
           sync(query, false);
           void render(query);
-        });
+        }, { signal });
 
         window.addEventListener("popstate", () => {
           const query = new URLSearchParams(window.location.search).get("q") || "";
           input.value = query;
           void render(query.trim());
-        });
+        }, { signal });
       })();
     </script>
   </main>

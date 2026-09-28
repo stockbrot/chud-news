@@ -123,9 +123,12 @@ const extraTargets = [
 </dialog>
 
 <script>
-  const sheet = document.querySelector<HTMLDialogElement>("[data-share-sheet]");
+  document.addEventListener("astro:page-load", () => {
+    document.documentElement.classList.remove("has-open-sheet");
+    const sheet = document.querySelector<HTMLDialogElement>("[data-share-sheet]");
 
-  if (sheet && typeof sheet.showModal === "function") {
+    if (sheet && typeof sheet.showModal === "function" && !sheet.dataset.shareReady) {
+      sheet.dataset.shareReady = "true";
     let opener: HTMLElement | null = null;
 
     const close = () => {
@@ -191,7 +194,8 @@ const extraTargets = [
       window.clearTimeout(restore);
       restore = window.setTimeout(() => (copyLabel.textContent = "Copy"), 2400);
     });
-  }
+    }
+  });
 </script>
 
 <style>

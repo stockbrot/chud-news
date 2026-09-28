@@ -1,6 +1,7 @@
 ---
 import { getImage } from "astro:assets";
 import type { ImageMetadata } from "astro";
+import { ClientRouter } from "astro:transitions";
 import { siteConfig } from "@/config/site";
 import { websiteSchema } from "@/lib/schema";
 import "@/styles/global.css";
@@ -68,10 +69,11 @@ const schema = structuredData ?? websiteSchema();
 ---
 
 <!doctype html>
-<html lang={siteConfig.language} data-theme={initialTheme}>
+<html lang={siteConfig.language} data-theme={initialTheme} transition:animate="none">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <ClientRouter />
     <link
       rel="preload"
       href="/fonts/figtree/Figtree-Variable-latin.woff2"
@@ -118,50 +120,63 @@ const schema = structuredData ?? websiteSchema();
     <script is:inline define:vars={{ defaultColorMode }}>
       (() => {
         const storageKey = "mailer-theme";
-        const root = document.documentElement;
         const query = window.matchMedia("(prefers-color-scheme: dark)");
-        let stored;
 
-        try {
-          stored = localStorage.getItem(storageKey);
-        } catch {
-          stored = null;
-        }
-
-        const setTheme = (theme, persist = false) => {
-          root.dataset.theme = theme;
-          if (!persist) return;
-          stored = theme;
+        const getStored = () => {
           try {
-            localStorage.setItem(storageKey, theme);
-          } catch {}
+            return localStorage.getItem(storageKey);
+          } catch {
+            return null;
+          }
         };
 
-        /* A stored choice always wins; only "system" defers to the OS. */
-        const preferred =
-          stored === "light" || stored === "dark"
+        const preferredTheme = () => {
+          const stored = getStored();
+          return stored === "light" || stored === "dark"
             ? stored
             : defaultColorMode === "system"
               ? query.matches
                 ? "dark"
                 : "light"
               : defaultColorMode;
+        };
 
-        setTheme(preferred);
+        const setTheme = (theme, persist = false, root = document.documentElement) => {
+          root.dataset.theme = theme;
+          if (!persist) return;
+          try {
+            localStorage.setItem(storageKey, theme);
+          } catch {}
+        };
 
-        query.addEventListener("change", (event) => {
-          if (defaultColorMode !== "system") return;
-          if (stored === "light" || stored === "dark") return;
-          setTheme(event.matches ? "dark" : "light");
-        });
+        setTheme(preferredTheme());
 
-        window.addEventListener("DOMContentLoaded", () => {
+        /* Put the saved theme on the incoming document before Astro swaps it
+           into view. This prevents a dark page from flashing light. */
+        if (!window.mailerThemeReady) {
+          window.mailerThemeReady = true;
+          document.addEventListener("astro:before-swap", (event) => {
+            setTheme(preferredTheme(), false, event.newDocument.documentElement);
+          });
+
+          query.addEventListener("change", (event) => {
+            if (defaultColorMode !== "system") return;
+            const stored = getStored();
+            if (stored === "light" || stored === "dark") return;
+            setTheme(event.matches ? "dark" : "light");
+          });
+
+          document.addEventListener("astro:page-load", () => {
+            setTheme(preferredTheme());
           document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+              if (button.dataset.themeReady) return;
+              button.dataset.themeReady = "true";
             button.addEventListener("click", () => {
-              setTheme(root.dataset.theme === "dark" ? "light" : "dark", true);
+                setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark", true);
             });
           });
         });
+        }
       })();
     </script>
   </head>
