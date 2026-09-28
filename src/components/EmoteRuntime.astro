@@ -1,0 +1,44 @@
+<script>
+  import { resolveEmote } from "@/lib/emotes";
+
+  const excluded = "script, style, noscript, textarea, input, select, option, pre, code, kbd, samp, svg, math, [contenteditable]:not([contenteditable='false']), [data-no-emotes]";
+
+  function renderEmotes() {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        return node.textContent?.includes(":") && !node.parentElement?.closest(excluded)
+          ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      },
+    });
+    const nodes: Text[] = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+    for (const node of nodes) {
+      const text = node.data;
+      const fragment = document.createDocumentFragment();
+      let offset = 0;
+      for (const match of text.matchAll(/:([A-Za-z0-9_-]+):/g)) {
+        const emote = resolveEmote(match[1]);
+        if (!emote) continue;
+        fragment.append(text.slice(offset, match.index));
+        const image = document.createElement("img");
+        image.src = emote.src;
+        image.alt = match[0];
+        image.title = match[1];
+        image.className = "emote";
+        image.dataset.emote = "";
+        image.loading = "lazy";
+        image.decoding = "async";
+        image.addEventListener("error", () => image.replaceWith(image.alt), { once: true });
+        fragment.append(image);
+        offset = match.index + match[0].length;
+      }
+      if (offset) {
+        fragment.append(text.slice(offset));
+        node.replaceWith(fragment);
+      }
+    }
+  }
+
+  renderEmotes();
+  document.addEventListener("astro:page-load", renderEmotes);
+</script>

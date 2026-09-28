@@ -6,7 +6,6 @@ topic: "Updates"
 date: 2026-09-10
 author:
   name: "Epic Games"
-  role: "Developer & Publishing Company"
 cover:
   src: "./cover.jpg"
   alt: "A bright gradient of red, orange, blue and pink"

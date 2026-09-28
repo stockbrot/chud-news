@@ -6,7 +6,6 @@ topic: "Industry"
 date: 2026-06-25
 author:
   name: "Crytek"
-  role: "Engine & Game Developer"
 cover:
   src: "./cover.jpg"
   alt: "A pale gradient of green, pink and blue"

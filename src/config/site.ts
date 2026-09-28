@@ -13,12 +13,12 @@ export const siteConfig = {
   language: "en",
   dateLocale: "en-US",
   locale: "en_US",
-  socialImage: "/og-image.png",
-  publisherLogo: "/og-image.png",
+  socialImage: "../assets/site/chud.jpg",
+  publisherLogo: "../assets/site/chud.jpg",
   /** Reading speed behind the "min read" line. Counted from the body at build time. */
   wordsPerMinute: 225,
   /** What a first-time visitor gets. "system" follows the OS; a reader's toggle wins either way. */
-  defaultColorMode: "dark",
+  defaultColorMode: "system",
   /**
    * Lets a `Bookmark` fill itself in from the linked page's Open Graph tags at
    * build time. Every lookup is cached in `.astro`, times out, and falls back
@@ -29,7 +29,7 @@ export const siteConfig = {
   /** Printed under the masthead and in the footer. Keep it to one sentence. */
   bio: "Bringing the news to you without the corporate filter.",
   /** Shown beside the signup form. Set it to whatever your schedule actually is. */
-  cadence: "As Soon As Possible",
+  cadence: "Every day",
   /**
    * The byline that fronts the About page. `name` must match an `author.name`
    * used in issue frontmatter — the block links to that writer's archive.
@@ -81,6 +81,7 @@ export const primaryNavigation = [
   { label: "Developers", href: "/devs/" },
   { label: "About", href: "/about/" },
   { label: "Styleguide", href: "/styleguide/" },
+  { label: "Score", href: "/scoring/" },
 ];
 
 export const footerNavigation = [
@@ -90,6 +91,7 @@ export const footerNavigation = [
       { label: "All posts", href: "/archive/" },
       { label: "Categories", href: "/topics/" },
       { label: "Developers", href: "/devs/" },
+      { label: "Scoring guide", href: "/scoring/" },
       { label: "Search", href: "/search/" },
     ],
   },

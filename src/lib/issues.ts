@@ -1,6 +1,7 @@
 import type { CollectionEntry } from "astro:content";
 import { topics, topicSlug, type Topic } from "@/config/topics";
 import { siteConfig } from "@/config/site";
+import { writerRole } from "@/config/writers";
 
 export type Issue = CollectionEntry<"issues">;
 export { topics, topicSlug, type Topic };
@@ -84,14 +85,12 @@ export const allWriters = (issues: Issue[]): WriterSummary[] =>
   Array.from(
     publishedIssues(issues)
       .reduce((writers, issue) => {
-        const { name, role } = issue.data.author;
+        const { name } = issue.data.author;
         const slug = writerSlug(name);
         const current = writers.get(slug);
         writers.set(slug, {
           name,
-          /* The first role a name appears under wins, so a guest byline keeps
-             the title from their own issues. */
-          role: current?.role ?? role,
+          role: writerRole(name),
           issues: [...(current?.issues ?? []), issue],
         });
         return writers;

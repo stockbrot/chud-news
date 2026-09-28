@@ -51,7 +51,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
         <Icon name="moon" size={18} class="theme-moon" />
       </button>
 
-      <!-- <a class="btn header-cta" href="/#subscribe">Subscribe</a> -->
+      <a class="btn header-cta" href="/#subscribe">Subscribe</a>
 
       <button
         type="button"
@@ -129,7 +129,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     const query = input.value.trim();
     if (!query) {
       const items = await runtime.load();
-      status.textContent = `Search ${items.length} posts by title, topic, number, or company.`;
+      status.textContent = `Search the full text of ${items.length} posts, plus titles, topics, numbers, and companies.`;
       results.innerHTML = "";
       return;
     }
@@ -173,4 +173,3 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     else open();
   });
 </script>
-

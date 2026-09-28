@@ -6,7 +6,6 @@ topic: "Redemption"
 date: 2026-05-14
 author:
   name: "Arkane Studios"
-  role: "Developer"
 cover:
   src: "./cover.jpg"
   alt: "A soft gradient of pink, violet and blue"

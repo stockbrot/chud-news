@@ -1569,6 +1569,18 @@ a.chip[data-topic]:hover {
   border-radius: var(--r-md);
 }
 
+/* Emotes stay inline, including inside article prose and headings. */
+img.emote {
+  display: inline-block;
+  height: var(--emote-size, 1.5em);
+  width: auto;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
 .prose figure figcaption {
   margin-top: 0.6rem;
   font-size: 0.875rem;

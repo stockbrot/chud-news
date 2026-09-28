@@ -6,7 +6,6 @@ topic: "Industry"
 date: 2026-09-17
 author:
   name: "Bulkhead"
-  role: "Developer"
 featured: true
 cover:
   src: "./cover.jpg"

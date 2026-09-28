@@ -6,7 +6,6 @@ topic: "Redemption"
 date: 2026-09-03
 author:
   name: "Crytek"
-  role: "Engine & Game Developer"
 cover:
   src: "./cover.jpg"
   alt: "A gradient running from red and orange into green"

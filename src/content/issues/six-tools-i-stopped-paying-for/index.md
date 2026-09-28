@@ -6,7 +6,6 @@ topic: "Redemption"
 date: 2026-07-09
 author:
   name: "Rockstar Games"
-  role: "Engine & Game Developer"
 cover:
   src: "./cover.jpg"
   alt: "A deep red and black gradient"

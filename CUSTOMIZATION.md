@@ -348,3 +348,62 @@ npm run format  # Prettier
 ```
 
 `npm run release:check` runs all three.
+
+## Emotes (7TV and BetterTTV)
+
+Register aliases in `src/config/emotes.ts` using the ID from the provider's
+emote page URL and platform `"7tv"` or `"bttv"`. Then write ordinary text in
+any `.astro`, `.md`, or `.mdx` file on pages using `BaseLayout`:
+
+```text
+Nice patch :catJAM: :LuL: :BANGER: :party:
+```
+
+No imports needed. Names are case-sensitive; unknown aliases stay as text.
+Only aliases registered in `src/config/emotes.ts` are available; typing a name
+does not automatically search the providers. `LuL` is static; `catJAM`, `BANGER`,
+and `party` are animated.
+Code, form fields, editable areas, and elements with `data-no-emotes` are skipped.
+Attributes are not changed. Shortcodes use a small browser script; without
+JavaScript, they remain readable text.
+
+MDX issues also support `<Emote name="party" />` without imports. For `.astro`
+files (or MDX outside the issue renderer), import the component once:
+
+```astro
+---
+import Emote from "@/components/Emote.astro";
+---
+<p>Nice patch <Emote name="catJAM" /></p>
+```
+
+The component renders without JavaScript. One-off IDs also work:
+
+```astro
+<Emote platform="bttv" id="55e2096ea6fa8b261f81b12a" name="party" />
+```
+
+Emotes are 1.5em high and follow the surrounding text size. Set `--emote-size`
+on a parent or custom class to change height. The component's `size` prop
+(`"1x"`, `"2x"` default, or `"3x"`) controls resolution, not displayed height.
+Original files load directly from provider CDNs, preserving animation; static
+source emotes remain static. Image availability depends on the provider.
+Both providers and syntaxes are demonstrated on `/styleguide/`.
+
+## Developer scoring
+
+The public policy and worked examples live at `/scoring/` in
+`src/pages/scoring.astro`. Every developer starts at 1,000; published posts add
+their frontmatter `score` to that total. Scores are editorial decisions, not
+automatically calculated from article text or update dates.
+
+Keep a dated scoring ledger in each article with evidence and signed changes.
+For a launch penalty of -50 followed by a +25 fix award, change the same post's
+frontmatter to `score: -25` and set `updatedDate` to the update date. Append the
+update to the body without deleting the initial finding. If you instead write
+a separate follow-up, give it only `score: 25` and leave the original at -50.
+Never count the same adjustment in both articles. Drafts do not affect totals.
+
+The existing sample articles contain demonstration scores and have not been
+re-scored against this policy. Replace those values and their placeholder
+content when publishing actual coverage.

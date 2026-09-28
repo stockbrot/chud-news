@@ -6,7 +6,6 @@ topic: "Redemption"
 date: 2026-08-20
 author:
   name: "Arkane Studios"
-  role: "Developer"
 score: -523
 cover:
   src: "./cover.jpg"

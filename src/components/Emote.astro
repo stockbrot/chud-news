@@ -1,0 +1,26 @@
+---
+import { resolveEmote, type EmotePlatform, type EmoteSize } from "@/lib/emotes";
+
+interface Props {
+  name: string;
+  id?: string;
+  platform?: EmotePlatform;
+  /** Image resolution; visual height follows the surrounding text. */
+  size?: EmoteSize;
+  class?: string;
+}
+
+const { name, id, platform = "7tv", size = "2x", class: className } = Astro.props;
+const emote = resolveEmote(name, id ? { id, platform } : undefined, size);
+if (!emote) throw new Error(`Unknown emote "${name}". Add it to src/config/emotes.ts or supply an id.`);
+---
+
+<img
+  src={emote.src}
+  alt={`:${name}:`}
+  title={name}
+  class:list={["emote", className]}
+  data-emote
+  loading="lazy"
+  decoding="async"
+/>

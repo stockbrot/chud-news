@@ -6,7 +6,6 @@ topic: "Redemption"
 date: 2026-04-30
 author:
   name: "Crytek"
-  role: "Engine & Game Developer"
 cover:
   src: "./cover.jpg"
   alt: "A muted gradient of olive, brown and deep purple"

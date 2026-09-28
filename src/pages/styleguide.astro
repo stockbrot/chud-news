@@ -1,5 +1,6 @@
 ---
 import { Code } from "astro:components";
+import Emote from "@/components/Emote.astro";
 import Audio from "@/components/content/Audio.astro";
 import Bookmark from "@/components/content/Bookmark.astro";
 import Callout from "@/components/content/Callout.astro";
@@ -55,6 +56,11 @@ import regular from "@/content/issues/plain-text-still-beats-your-template/photo
           Body copy sits at the reading measure the issue pages use. It carries <strong>bold</strong
           > and <em>italic</em> emphasis, <code>inline code</code>, and <a href="https://astro.build">links</a> that pick up the accent colour.
         </p>
+
+        <h2>Emotes</h2>
+        <p>Shortcodes work everywhere: :LuL: :modCheck: :catJAM: :BANGER:  :party: </p>
+        <p>Components work inline too: <Emote name="catJAM" /> <Emote name="party" /></p>
+        <p>Write <code>:catJAM:</code> or <code>{'<Emote name="party" />'}</code>.</p>
 
         <h2>Quotes</h2>
         <blockquote>

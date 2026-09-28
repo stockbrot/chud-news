@@ -4,6 +4,7 @@ import type { ImageMetadata } from "astro";
 import { siteConfig } from "@/config/site";
 import { websiteSchema } from "@/lib/schema";
 import "@/styles/global.css";
+import EmoteRuntime from "@/components/EmoteRuntime.astro";
 
 interface Props {
   title?: string;
@@ -165,7 +166,8 @@ const schema = structuredData ?? websiteSchema();
     </script>
   </head>
   <body>
-    <a class="skip-link" href="#content">Skip to content</a>
+    <!-- <a class="skip-link" href="#content">Skip to content</a> -->
     <slot />
+    <EmoteRuntime />
   </body>
 </html>

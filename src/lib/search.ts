@@ -15,6 +15,8 @@ export interface SearchItem {
   number: string;
   title: string;
   excerpt: string;
+  /** Markdown/MDX source, used only for matching and never rendered as HTML. */
+  body: string;
   href: string;
   topic: string;
   author: string;
@@ -26,6 +28,7 @@ export const searchItem = (issue: Issue): SearchItem => ({
   number: issueNumber(issue),
   title: issue.data.title,
   excerpt: issue.data.excerpt,
+  body: issue.body ?? "",
   href: issueHref(issue),
   topic: issue.data.topic,
   author: issue.data.author.name,

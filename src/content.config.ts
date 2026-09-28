@@ -17,7 +17,8 @@ const issues = defineCollection({
       updatedDate: z.coerce.date().optional(),
       author: z.object({
         name: z.string(),
-        role: z.string(),
+        /** Legacy field; displayed roles come from src/config/writers.ts. */
+        role: z.string().optional(),
       }),
       score: z.number().default(0),
       cover: z.object({

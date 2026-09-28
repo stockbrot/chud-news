@@ -6,7 +6,6 @@ topic: "Censorship"
 date: 2026-06-11
 author:
   name: "Rockstar Games"
-  role: "Developer"
 cover:
   src: "./cover.jpg"
   alt: "A bright gradient of magenta, yellow and cyan"

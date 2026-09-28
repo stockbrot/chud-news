@@ -1,4 +1,5 @@
 import Audio from "@/components/content/Audio.astro";
+import Emote from "@/components/Emote.astro";
 import Bookmark from "@/components/content/Bookmark.astro";
 import Callout from "@/components/content/Callout.astro";
 import Figure from "@/components/content/Figure.astro";
@@ -16,6 +17,7 @@ import Toggle from "@/components/content/Toggle.astro";
  * See `/styleguide/` for what each one looks like and the props it takes.
  */
 export const issueComponents = {
+  Emote,
   Audio,
   Bookmark,
   Callout,

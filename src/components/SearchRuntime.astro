@@ -24,7 +24,7 @@
 
       const items = await load();
       return items.filter((item) => {
-        const haystack = [item.title, item.excerpt, item.topic, item.author, item.number]
+        const haystack = [item.title, item.excerpt, item.body, item.topic, item.author, item.number]
           .join(" ")
           .toLowerCase();
         return terms.every((term) => haystack.includes(term));

@@ -28,6 +28,7 @@
   });
 
   document.querySelectorAll<HTMLImageElement>(".prose > p > img, .prose > img").forEach((image) => {
+    if (image.hasAttribute("data-emote")) return;
     image.dataset.lightbox = "";
     image.dataset.lightboxGroup = "issue";
     image.dataset.lightboxSrc = image.currentSrc || image.src;

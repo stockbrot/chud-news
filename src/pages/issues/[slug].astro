@@ -17,7 +17,7 @@ import Avatar from "@/components/ui/Avatar.astro";
 import Icon from "@/components/ui/Icon.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { siteConfig } from "@/config/site";
-import { writerBio } from "@/config/writers";
+import { writerBio, writerRole } from "@/config/writers";
 import {
   adjacentIssues,
   developerScore,
@@ -158,7 +158,7 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
                     {data.author.name}
                   </a>
                 </p>
-                <p class="t-meta">{data.author.role}</p>
+                <p class="t-meta">{writerRole(data.author.name)}</p>
                 {bio && <p class="t-small t-dim" style="margin-top:0.4rem">{bio}</p>}
               </div>
             </div>
