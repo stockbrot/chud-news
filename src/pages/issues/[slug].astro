@@ -4,7 +4,9 @@ import { Image } from "astro:assets";
 import Lightbox from "@/components/content/Lightbox.astro";
 import ProseRuntime from "@/components/content/ProseRuntime.astro";
 import IssueCard from "@/components/IssueCard.astro";
+import IssueComments from "@/components/IssueComments.astro";
 import IssueMeta from "@/components/IssueMeta.astro";
+import IssueScore from "@/components/IssueScore.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import ShareRow from "@/components/ShareRow.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
@@ -18,6 +20,7 @@ import { siteConfig } from "@/config/site";
 import { writerBio } from "@/config/writers";
 import {
   adjacentIssues,
+  developerScore,
   formatDate,
   issueHref,
   issueNumber,
@@ -46,6 +49,7 @@ interface Props {
 const { issue, issues } = Astro.props;
 const { Content } = await render(issue);
 const data = issue.data;
+const totalScore = developerScore(issues, data.author.name);
 
 const { newer, older } = adjacentIssues(issues, issue);
 const related = relatedIssues(issues, issue);
@@ -86,6 +90,23 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
             <IssueMeta issue={issue} linked />
             <TopicChip topic={data.topic} />
           </div>
+          <dl class="issue-scores">
+            <div>
+              <dd><IssueScore score={data.score} /></dd>
+              <dt>This post</dt>
+            </div>
+            <div>
+              <dt>Current total</dt>
+              <dd>
+                <IssueScore
+                  score={totalScore}
+                  baseline={1000}
+                  signed={false}
+                  accessibleLabel={`${data.author.name} current total score`}
+                />
+              </dd>
+            </div>
+          </dl>
         </header>
 
         <figure class="issue-figure">
@@ -176,6 +197,8 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
       </div>
     </article>
 
+    <IssueComments />
+
     <div class="container section">
       <SubscribePanel id="issue-subscribe" />
     </div>
@@ -183,7 +206,7 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
     {
       related.length > 0 && (
         <section class="container section--tight" aria-labelledby="related-title">
-          <SectionHead title="Keep reading" id="related-title" href="/archive/" linkLabel="All issues" />
+          <SectionHead title="Keep reading" id="related-title" href="/archive/" linkLabel="All posts" />
           <div class="cards cards--3">
             {related.map((item) => (
               <IssueCard issue={item} headingLevel="h3" showExcerpt={false} />
@@ -226,6 +249,35 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
 </script>
 
 <style>
+  .issue-scores {
+    justify-self: stretch;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    gap: 1rem 2rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .issue-scores > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .issue-scores dt {
+    color: var(--ink-soft);
+    font-size: 0.8125rem;
+  }
+
+  .issue-scores dd {
+    margin: 0;
+  }
+
   .issue-head__row {
     display: flex;
     flex-wrap: wrap;

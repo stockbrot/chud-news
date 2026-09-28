@@ -1,7 +1,8 @@
 ---
 import Avatar from "@/components/ui/Avatar.astro";
+import IssueScore from "@/components/IssueScore.astro";
 import { writerBio } from "@/config/writers";
-import type { WriterSummary } from "@/lib/issues";
+import { developerScore, type WriterSummary } from "@/lib/issues";
 
 interface Props {
   writer: WriterSummary;
@@ -11,6 +12,7 @@ interface Props {
 const { writer, showBio = false } = Astro.props;
 const bio = writerBio(writer.name);
 const count = writer.issues.length;
+const score = developerScore(writer.issues, writer.name);
 ---
 
 <a class="writer-card" href={`/devs/${writer.slug}/`}>
@@ -20,6 +22,26 @@ const count = writer.issues.length;
     <span class="t-meta">
       {writer.role} &middot; {count} {count === 1 ? "issue" : "issues"}
     </span>
+    <span class="writer-card__score">
+      <span class="t-meta">Total score</span>
+      <IssueScore
+        score={score}
+        baseline={1000}
+        signed={false}
+        compact
+        accessibleLabel={`${writer.name} total score`}
+      />
+    </span>
     {showBio && bio && <span class="t-small t-dim" style="margin-top:0.25rem">{bio}</span>}
   </span>
 </a>
+
+<style>
+  .writer-card__score {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+</style>

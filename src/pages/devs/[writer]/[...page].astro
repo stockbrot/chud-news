@@ -11,6 +11,7 @@ import { siteConfig } from "@/config/site";
 import { writerBio } from "@/config/writers";
 import {
   allWriters,
+  developerScore,
   formatDate,
   publishedIssues,
   withTrailingSlash,
@@ -38,49 +39,130 @@ interface Props {
 const { writer, page } = Astro.props;
 const latest = writer.issues[0];
 const bio = writerBio(writer.name);
+const score = developerScore(writer.issues, writer.name);
 const title = page.currentPage === 1 ? writer.name : `${writer.name} - Page ${page.currentPage}`;
 const prevUrl = withTrailingSlash(page.url.prev);
 const nextUrl = withTrailingSlash(page.url.next);
 ---
 
 <BaseLayout
-  title={title}
-  description={`Issues written by ${writer.name}, ${writer.role}, for ${siteConfig.name}.`}
-  image={latest?.data.cover.src}
-  imageAlt={latest?.data.cover.alt}
+title={title}
+description={`Issues written by ${writer.name}, ${writer.role}, for ${siteConfig.name}.`}
+image={latest?.data.cover.src}
+imageAlt={latest?.data.cover.alt}
+prevUrl={prevUrl}
+nextUrl={nextUrl}
+>
+<SiteHeader />
+<main id="content">
+  <div class="container">
+    <header class="writer-hero">
+      <Avatar name={writer.name} size="xl" />
+      <div class="stack" style="gap:0.6rem">
+        <h1 class="t-h1">{writer.name}</h1>
+        <p class="t-lead">{writer.role}</p>
+        {bio && <p class="t-body t-dim" style="max-width:52ch">{bio}</p>}
+        <div
+        class="score-bar"
+        style={`--fill: ${Math.max(0, Math.min(100, (score / 2000) * 100))}%; margin-top: 2rem; --score-color: hsl(${Math.max(0, Math.min(120, (score / 2000) * 120))}, 75%, 45%);`}
+        >
+        <div class="score-fill"></div>
+
+        <span class="score-number">{score}</span>
+
+        <span class="score-midpoint">1000</span>
+      </div>
+        <!-- <p>SCORE: score}</p> -->
+      <p class="meta">
+        <span>
+          {page.total} {page.total === 1 ? "issue" : "issues"}
+        </span>
+        {latest && <span class="dot-sep" aria-hidden="true" />}
+        {latest && <span>Latest {formatDate(latest.data.date)}</span>}
+      </p>
+    </div>
+  </header>
+</div>
+
+<section class="container section--tight" aria-label={`Issues by ${writer.name}`}>
+  <IssueIndex issues={page.data} headingLevel="h2" />
+  <Pagination
   prevUrl={prevUrl}
   nextUrl={nextUrl}
->
-  <SiteHeader />
-  <main id="content">
-    <div class="container">
-      <header class="writer-hero">
-        <Avatar name={writer.name} size="xl" />
-        <div class="stack" style="gap:0.6rem">
-          <h1 class="t-h1">{writer.name}</h1>
-          <p class="t-lead">{writer.role}</p>
-          {bio && <p class="t-body t-dim" style="max-width:52ch">{bio}</p>}
-          <p class="meta">
-            <span>
-              {page.total} {page.total === 1 ? "issue" : "issues"}
-            </span>
-            {latest && <span class="dot-sep" aria-hidden="true" />}
-            {latest && <span>Latest {formatDate(latest.data.date)}</span>}
-          </p>
-        </div>
-      </header>
-    </div>
-
-    <section class="container section--tight" aria-label={`Issues by ${writer.name}`}>
-      <IssueIndex issues={page.data} headingLevel="h2" />
-      <Pagination
-        prevUrl={prevUrl}
-        nextUrl={nextUrl}
-        currentPage={page.currentPage}
-        lastPage={page.lastPage}
-        label={`${writer.name} pagination`}
-      />
-    </section>
-  </main>
-  <SiteFooter />
+  currentPage={page.currentPage}
+  lastPage={page.lastPage}
+  label={`${writer.name} pagination`}
+  />
+</section>
+</main>
+<SiteFooter />
 </BaseLayout>
+
+<style>
+  .writer-hero {
+    position: relative;
+    padding-right: 7rem;
+  }
+
+  .score-bar {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    width: 70px;
+    height: 100%;
+
+    background: #222;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .score-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: var(--fill);
+
+    background: var(--score-color);
+
+    transition:
+      height 0.4s ease,
+      background 0.4s ease;
+  }
+
+  .score-number {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(20px, var(--fill), calc(100% - 20px));
+    transform: translate(-50%, 50%);
+
+    font-size: 1.1rem;
+    font-weight: 800;
+
+    background: #fff;
+    color: #111;
+
+    padding: 0.25rem 0.4rem;
+    border-radius: 5px;
+
+    z-index: 2;
+  }
+
+  .score-midpoint {
+    position: absolute;
+    top: 50%;
+    left: 0;
+
+    width: 100%;
+
+    border-top: 2px solid rgba(255,255,255,0.6);
+
+    text-align: center;
+    font-size: 0.6rem;
+    color: white;
+
+    z-index: 1;
+  }
+</style>

@@ -2,11 +2,11 @@
 issue: 2
 title: "The archive is the product"
 excerpt: "Most newsletters treat past issues as a backup. They are the only thing a new reader can judge you on before they hand over an address."
-topic: "Design"
+topic: "Redemption"
 date: 2026-04-30
 author:
-  name: "Sam Patel"
-  role: "Audience"
+  name: "Crytek"
+  role: "Engine & Game Developer"
 cover:
   src: "./cover.jpg"
   alt: "A muted gradient of olive, brown and deep purple"

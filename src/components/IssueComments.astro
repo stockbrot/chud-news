@@ -1,0 +1,136 @@
+---
+import { commentsConfig } from "@/config/comments";
+
+const { enabled, repo, repoId, category, categoryId } = commentsConfig;
+const configured = Boolean(repo && repoId && category && categoryId);
+---
+
+{
+  enabled && (
+    <section class="issue-comments reading" aria-labelledby="comments-title" id="comments">
+      <header class="issue-comments__header">
+        <div>
+          <h2 class="t-h3" id="comments-title">Discussion</h2>
+          <p class="t-small t-dim">Your take belongs here. Keep it thoughtful.</p>
+        </div>
+        <span class="issue-comments__label">Community</span>
+      </header>
+      {configured ? (
+        <>
+          <div
+            class="giscus"
+            data-comments
+            data-repo={repo}
+            data-repo-id={repoId}
+            data-category={category}
+            data-category-id={categoryId}
+          />
+          <noscript>
+            <p class="t-small t-dim">
+              Enable JavaScript to read and leave comments, or visit{" "}
+              <a class="link" href={`https://github.com/${repo}/discussions`}>GitHub Discussions</a>.
+            </p>
+          </noscript>
+          <p class="issue-comments__credit">
+            Powered by <a class="link" href="https://giscus.app">Giscus</a> · Sign in with GitHub to join in.
+          </p>
+        </>
+      ) : (
+        <p class="issue-comments__empty t-small t-dim">
+          Comments are coming soon. Check back to join the conversation.
+        </p>
+      )}
+    </section>
+  )
+}
+
+<script>
+  const container = document.querySelector<HTMLElement>("[data-comments]");
+
+  if (container) {
+    const theme = () =>
+      document.documentElement.dataset.theme === "dark" ? "transparent_dark" : "light";
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.crossOrigin = "anonymous";
+    Object.assign(script.dataset, container.dataset, {
+      mapping: "pathname",
+      strict: "1",
+      reactionsEnabled: "0",
+      emitMetadata: "0",
+      inputPosition: "top",
+      theme: theme(),
+      lang: "en",
+      loading: "lazy",
+    });
+    script.addEventListener("error", () => {
+      const message = document.createElement("p");
+      message.className = "t-small t-dim";
+      message.textContent = "Comments couldn’t load. Please refresh to try again.";
+      container.append(message);
+    });
+    container.append(script);
+
+    const syncTheme = () => {
+      script.dataset.theme = theme();
+      container.querySelector<HTMLIFrameElement>("iframe.giscus-frame")?.contentWindow?.postMessage(
+        { giscus: { setConfig: { theme: theme() } } },
+        "https://giscus.app",
+      );
+    };
+    new MutationObserver(syncTheme).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    // Also synchronize if the reader switches themes while the lazy iframe loads.
+    container.addEventListener("load", syncTheme, true);
+  }
+</script>
+
+<style>
+  .issue-comments {
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+    scroll-margin-top: 6rem;
+  }
+
+  .issue-comments__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .issue-comments__header p {
+    margin-top: 0.4rem;
+  }
+
+  .issue-comments__label {
+    color: var(--ink-faint);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .issue-comments__empty {
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    background: var(--surface);
+  }
+
+  .issue-comments__credit {
+    margin-top: 1rem;
+    color: var(--ink-faint);
+    font-size: 0.75rem;
+  }
+
+  .giscus {
+    min-height: 16rem;
+  }
+</style>

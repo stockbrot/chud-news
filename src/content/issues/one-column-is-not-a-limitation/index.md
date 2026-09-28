@@ -2,11 +2,12 @@
 issue: 10
 title: "One column is not a limitation"
 excerpt: "Email design has one real constraint and about forty imaginary ones. Working inside the real one is where the good work is."
-topic: "Design"
+topic: "Redemption"
 date: 2026-08-20
 author:
-  name: "Leah Morgan"
-  role: "Interviews"
+  name: "Arkane Studios"
+  role: "Developer"
+score: -523
 cover:
   src: "./cover.jpg"
   alt: "A dark gradient of teal, blue and yellow"

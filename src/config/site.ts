@@ -53,7 +53,7 @@ export const siteConfig = {
     action: "",
     method: "post",
     emailFieldName: "email",
-    title: "Get the next issue",
+    title: "Get the next post",
     description:
       "One email every Thursday. No sequences, no upsells, unsubscribe in a click.",
     terms: "We store your address to send the newsletter, and nothing else.",
@@ -75,8 +75,8 @@ export const topicNavigation = topics.map((topic) => ({
 
 /** The bar. Anything longer belongs in the footer. */
 export const primaryNavigation = [
-  { label: "Home", href: "/archive/" },
-  { label: "Topics", href: "/topics/" },
+  { label: "All Posts", href: "/archive/" },
+  { label: "Categories", href: "/topics/" },
   { label: "Developers", href: "/devs/" },
   { label: "About", href: "/about/" },
   { label: "Styleguide", href: "/styleguide/" },
@@ -87,13 +87,13 @@ export const footerNavigation = [
     title: "Read",
     links: [
       { label: "All posts", href: "/archive/" },
-      { label: "Topics", href: "/topics/" },
+      { label: "Categories", href: "/topics/" },
       { label: "Developers", href: "/devs/" },
       { label: "Search", href: "/search/" },
     ],
   },
   {
-    title: "Topics",
+    title: "Categories",
     links: topicNavigation,
   },
   {

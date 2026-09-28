@@ -5,9 +5,8 @@
    Mailer — design tokens
    --------------------------------------------------------------------------
    One typeface, tinted neutral surfaces, generous radii, and a single blue
-   that only ever means "this is interactive". Topic chips stay inside a narrow
-   band around that blue — teal through to violet — so they read as relatives
-   of the accent rather than six unrelated colours.
+   that only ever means "this is interactive". Topic chips use muted mineral
+   and earth tones, with contrasting ink in both colour modes.
    ========================================================================== */
 
 @font-face {
@@ -96,20 +95,19 @@
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --speed: 0.22s;
 
-  /* Topic containers: one walk around the accent, teal to violet, a step per
-     topic. Near neighbours, never a full colour wheel. */
-  --topic-craft: #dfe9fe;
-  --topic-craft-ink: #153a91;
-  --topic-design: #efe1fb;
-  --topic-design-ink: #55219b;
-  --topic-growth: #e3e6fd;
-  --topic-growth-ink: #232f9b;
-  --topic-money: #d8ecfb;
-  --topic-money-ink: #0b4a79;
-  --topic-tools: #d6f1f2;
-  --topic-tools-ink: #0a5257;
-  --topic-interviews: #e8e2fd;
-  --topic-interviews-ink: #3b269e;
+  /* Topic containers: steel, rust, olive, brass, pine, and graphite. */
+  --topic-craft: #c3cdd5;
+  --topic-craft-ink: #263c4c;
+  --topic-design: #d5c4b8;
+  --topic-design-ink: #59351f;
+  --topic-growth: #c7ccb7;
+  --topic-growth-ink: #374021;
+  --topic-money: #d5c9a9;
+  --topic-money-ink: #514019;
+  --topic-tools: #bbccc3;
+  --topic-tools-ink: #244335;
+  --topic-interviews: #c9c9c8;
+  --topic-interviews-ink: #373a3c;
 
   color-scheme: light;
 }
@@ -136,18 +134,18 @@
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
   --shadow-2: 0 2px 6px rgb(0 0 0 / 0.45), 0 12px 32px rgb(0 0 0 / 0.4);
 
-  --topic-craft: #17233f;
-  --topic-craft-ink: #b6c9ff;
-  --topic-design: #251a3c;
-  --topic-design-ink: #d8bcff;
-  --topic-growth: #1b1e40;
-  --topic-growth-ink: #bec2ff;
-  --topic-money: #112838;
-  --topic-money-ink: #a8d3f5;
-  --topic-tools: #0f2b2d;
-  --topic-tools-ink: #9fd8db;
-  --topic-interviews: #201a41;
-  --topic-interviews-ink: #cbbcff;
+  --topic-craft: #253440;
+  --topic-craft-ink: #a4b8c7;
+  --topic-design: #3b2c23;
+  --topic-design-ink: #ceaa8c;
+  --topic-growth: #303525;
+  --topic-growth-ink: #b5bd91;
+  --topic-money: #3b3321;
+  --topic-money-ink: #c9b575;
+  --topic-tools: #23382e;
+  --topic-tools-ink: #98b9a5;
+  --topic-interviews: #303234;
+  --topic-interviews-ink: #b8bab9;
 
   color-scheme: dark;
 }
@@ -531,27 +529,27 @@ a.chip--current:not([data-topic]):hover {
 }
 
 /* Topic chips carry their own step on the accent ramp. */
-.chip[data-topic="craft"] {
+.chip[data-topic="updates"] {
   background: var(--topic-craft);
   color: var(--topic-craft-ink);
 }
 
-.chip[data-topic="design"] {
+.chip[data-topic="redemption"] {
   background: var(--topic-design);
   color: var(--topic-design-ink);
 }
 
-.chip[data-topic="growth"] {
+.chip[data-topic="game-launch"] {
   background: var(--topic-growth);
   color: var(--topic-growth-ink);
 }
 
-.chip[data-topic="money"] {
+.chip[data-topic="censorship"] {
   background: var(--topic-money);
   color: var(--topic-money-ink);
 }
 
-.chip[data-topic="tools"] {
+.chip[data-topic="industry"] {
   background: var(--topic-tools);
   color: var(--topic-tools-ink);
 }
@@ -987,6 +985,59 @@ a.chip[data-topic]:hover {
     border-color var(--speed) var(--ease);
 }
 
+.index__score {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  min-width: 3.5rem;
+  padding: 0.3rem 0.5rem;
+
+  border: 1px solid var(--line);
+  border-radius: 6px;
+
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.index__score--positive {
+  color: #18733a;
+  border-color: rgba(74, 222, 128, 0.4);
+  background: rgba(74, 222, 128, 0.08);
+}
+
+.index__score--negative {
+  color: #b52e2e;
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.08);
+}
+
+.index__score--neutral {
+  color: #806000;
+  border-color: rgba(250, 204, 21, 0.4);
+  background: rgba(250, 204, 21, 0.08);
+}
+
+.index__score--compact {
+  min-width: 2rem;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+:root[data-theme="dark"] .index__score--positive {
+  color: #4ade80;
+}
+
+:root[data-theme="dark"] .index__score--negative {
+  color: #f87171;
+}
+
+:root[data-theme="dark"] .index__score--neutral {
+  color: #facc15;
+}
+
 .index__row:last-child {
   border-bottom-color: transparent;
 }
@@ -1055,7 +1106,7 @@ a.chip[data-topic]:hover {
 
 @media (min-width: 56rem) {
   .index__row {
-    grid-template-columns: 3.5rem minmax(0, 1fr) 8rem 11rem;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 8rem 5rem 11rem;
     gap: 1.5rem;
     align-items: center;
   }

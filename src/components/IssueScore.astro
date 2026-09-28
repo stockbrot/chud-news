@@ -1,0 +1,29 @@
+---
+interface Props {
+  score: number;
+  compact?: boolean;
+  baseline?: number;
+  signed?: boolean;
+  accessibleLabel?: string;
+}
+
+const {
+  score,
+  compact = false,
+  baseline = 0,
+  signed = true,
+  accessibleLabel = "Post Score",
+} = Astro.props;
+const label = `${signed && score > 0 ? "+" : ""}${score}`;
+---
+
+<span
+  class:list={[
+    "index__score",
+    `index__score--${score > baseline ? "positive" : score < baseline ? "negative" : "neutral"}`,
+    compact && "index__score--compact",
+  ]}
+  title={`${accessibleLabel}: ${label}`}
+>
+  <span class="sr-only">{accessibleLabel}: </span>{label}
+</span>

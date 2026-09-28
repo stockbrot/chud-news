@@ -2,11 +2,11 @@
 issue: 5
 title: "How to end an issue"
 excerpt: "Openings get all the advice. The last hundred words are what decides whether anyone replies, forwards, or opens the next one."
-topic: "Craft"
+topic: "Censorship"
 date: 2026-06-11
 author:
-  name: "Mara Chen"
-  role: "Editor"
+  name: "Rockstar Games"
+  role: "Developer"
 cover:
   src: "./cover.jpg"
   alt: "A bright gradient of magenta, yellow and cyan"

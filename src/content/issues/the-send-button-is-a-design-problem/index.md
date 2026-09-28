@@ -2,11 +2,11 @@
 issue: 13
 title: "The send button is a design problem"
 excerpt: "An irreversible action with no undo, pressed while tired, on the thing you care most about. No wonder everyone has a story."
-topic: "Craft"
+topic: "Industry"
 date: 2026-09-17
 author:
-  name: "Mara Chen"
-  role: "Editor"
+  name: "Bulkhead"
+  role: "Developer"
 featured: true
 cover:
   src: "./cover.jpg"

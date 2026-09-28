@@ -2,11 +2,11 @@
 issue: 6
 title: "The welcome email is doing all the work"
 excerpt: "It gets opened four times more than anything else you send, and most people write it once, in a hurry, and never look at it again."
-topic: "Growth"
+topic: "Industry"
 date: 2026-06-25
 author:
-  name: "Sam Patel"
-  role: "Audience"
+  name: "Crytek"
+  role: "Engine & Game Developer"
 cover:
   src: "./cover.jpg"
   alt: "A pale gradient of green, pink and blue"

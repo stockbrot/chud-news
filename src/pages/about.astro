@@ -22,25 +22,23 @@ const first = issues.at(-1);
   <main id="content">
     <div class="container">
       <PageIntro
-        title={`About ${siteConfig.name}`}
-        description={siteConfig.bio}
-        note={first ? `Sending since ${formatDate(first.data.date, "long")}` : undefined}
+      title={`About ${siteConfig.name}`}
+      description={siteConfig.bio}
+      note={first ? `Sending since ${formatDate(first.data.date, "long")}` : undefined}
       />
     </div>
 
     <div class="container">
-      <figure class="about-figure">
+      <figure class="">
         <Image
-          src={aboutImage}
-          alt="A wall of numbered apartment mailboxes"
-          widths={[720, 1080, 1600]}
-          sizes="(min-width: 72rem) 68rem, 92vw"
-          loading="eager"
+        src={aboutImage}
+        alt="A wall of numbered apartment mailboxes"
+        loading="eager"
         />
         <figcaption class="credit">
           Photograph by{" "}
-          <a class="link" href="https://www.pexels.com/photo/bright-yellow-apartment-mailboxes-front-view-13209666/" rel="noopener noreferrer">
-            Timothy Huliselan
+          <a class="link" href="https://www.whitehouse.gov/" rel="noopener noreferrer">
+            Donald Trump
           </a>
         </figcaption>
       </figure>
@@ -48,31 +46,49 @@ const first = issues.at(-1);
 
     <section class="reading section">
       <div class="prose">
-        <h2>What this is</h2>
-        <p>
-          {siteConfig.name} is a fortnightly letter about the unglamorous parts of running a
-          newsletter: the paragraph you cut, the template that renders badly in Outlook, the
-          deliverability problem that was really a consent problem, and the readers who quietly
-          stopped opening.
-        </p>
-        <p>
-          Every issue is one argument, long enough to be useful and short enough to finish on a
-          commute. No sponsor blocks, no link dumps, no sequences designed to warm you up.
-        </p>
+        <h1>About Chud News</h1>
 
-        <h2>What arrives</h2>
-        <ul>
-          <li>{siteConfig.cadence}, sent first thing in the morning.</li>
-          <li>Occasional interviews with people who have been publishing for years.</li>
-          <li>Nothing else. No launch emails, no webinars, no partner offers.</li>
-        </ul>
+        <p>Let's skip the corporate preamble. You didn't come here to read four paragraphs of PR-approved garbage, and we didn't write them.</p>
 
-        <h2>Using this theme</h2>
-        <p>
-          Everything on this site is demo content shipped with the theme. Replace the issues in
-          <code>src/content/issues/</code>, set your own details in <code>src/config/site.ts</code>,
-          point the signup form at your provider, and the rest follows.
-        </p>
+        <p><strong>Chud News exists because gaming journalism has become way too fucking comfortable.</strong></p>
+
+        <p>Publishers announce a $70 game with a battle pass, twelve editions, a mountain of preorder bullshit and performance problems, and somehow the article reads like the journalist is afraid the publisher might stop sending him review codes.</p>
+
+        <p>Meanwhile, some developer says something stupid on Twitter and suddenly it's a 1,500-word "controversy" because apparently a guy with 300 followers is now a threat to the gaming industry.</p>
+
+        <p>We're not doing that.</p>
+
+        <h1>Our Rules</h1>
+
+        <p><strong>No PR leash:</strong> We don't give a shit who made the game. If it's good, we'll say it's good. If it's broken garbage, we'll say that too. And if the developers actually fix their shit, we'll give them credit.</p>
+
+        <p><strong>No fluff:</strong> If the important part of a story can be explained in 30 seconds, we're not turning it into an 800-word SEO abortion just to make you scroll past twelve ads.</p>
+
+        <p><strong>No sacred cows:</strong> Publishers, developers, journalists, influencers, Redditors, Twitter weirdos, console warriors, PC master-race dickheads — everyone gets made fun of. Including us. Nobody gets a special little protection bubble.</p>
+
+        <p><strong>No fake outrage:</strong> Not everything is a "scandal." Sometimes something is genuinely fucked. Sometimes it's just dumb. And sometimes the internet is having a complete meltdown over absolutely nothing.</p>
+
+        <h1>What We Actually Cover</h1>
+
+        <p>New games. Major releases. Bad patches. Great updates. Developer drama. Publisher bullshit. Community backlash. Games getting better. Games getting worse. And the occasional moment where someone actually listens to their players instead of treating them like walking wallets.</p>
+
+        <p>We're not trying to hate everything. That's just as fucking boring as pretending everything is amazing.</p>
+
+        <h1>Who Is This For?</h1>
+
+        <p>Anyone who plays games and wants to know what actually happened without having somebody's PR department shoved down their throat.</p>
+
+        <p>We're not here to tell you what to think. We'll give you the story, tell you what we think is worth a shit, make fun of whoever deserves it, and let you decide.</p>
+
+        <h1>How We Stay Alive</h1>
+
+        <p>No publisher handouts. No pretending a game is good because someone sent us a review code.</p>
+
+        <p>If you like what we're doing and want to keep the lights on, you can throw a few bucks into our <strong>Patreon</strong> or <strong>Buy Me a Coffee</strong>. If not, that's fine too.</p>
+
+        <p>Read the news. Get the information. Go play some fucking games.</p>
+
+
       </div>
     </section>
 
@@ -82,7 +98,7 @@ const first = issues.at(-1);
           <h2 class="t-h3" id="editor-title" style="margin-bottom:1.25rem">
             {siteConfig.editor.title}
           </h2>
-          <a class="writer-card" href={`/writers/${writerSlug(editor.name)}/`}>
+          <a class="writer-card" href={`/devs/${writerSlug(editor.name)}/`}>
             <Avatar name={editor.name} size="lg" />
             <span class="stack" style="gap:0.3rem">
               <span class="t-h4">{editor.name}</span>

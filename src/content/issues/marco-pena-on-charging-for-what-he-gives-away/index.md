@@ -2,11 +2,11 @@
 issue: 3
 title: "Marco Peña on charging for what he gives away"
 excerpt: "Eleven years, no paywall, and a paid tier that unlocks nothing. He explains why it works and why he nearly did not try it."
-topic: "Interviews"
+topic: "Redemption"
 date: 2026-05-14
 author:
-  name: "Leah Morgan"
-  role: "Interviews"
+  name: "Arkane Studios"
+  role: "Developer"
 cover:
   src: "./cover.jpg"
   alt: "A soft gradient of pink, violet and blue"

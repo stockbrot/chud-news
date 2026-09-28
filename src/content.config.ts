@@ -19,6 +19,7 @@ const issues = defineCollection({
         name: z.string(),
         role: z.string(),
       }),
+      score: z.number().default(0),
       cover: z.object({
         src: image(),
         alt: z.string(),

@@ -2,11 +2,11 @@
 issue: 4
 title: "Deliverability, without the folklore"
 excerpt: "No, the word 'free' does not send you to spam. Here is what actually decides whether your issue lands, in the order it matters."
-topic: "Tools"
+topic: "Game Launch"
 date: 2026-05-28
 author:
-  name: "Iris Novak"
-  role: "Tools and deliverability"
+  name: "Sony"
+  role: "Publishing Company"
 cover:
   src: "./cover.jpg"
   alt: "A vivid gradient of blue, yellow and cyan"
@@ -17,7 +17,6 @@ cover:
 import Figure from "@/components/content/Figure.astro";
 import warmGradient from "./photo-1.jpg";
 import coolGradient from "./photo-2.jpg";
-import yesImage from "../../images/yes.jpg";
 
 Deliverability advice online is about eighty percent folklore. Avoid the word "free". Never use more than three links. Do not attach images. Keep your text-to-image ratio at 60:40, a number someone invented in 2011 and nobody has questioned since.
 
@@ -29,16 +28,6 @@ If SPF, DKIM and DMARC are not set up correctly on your sending domain, nothing 
 
 Your provider will have a page on this. Do it properly, with your own domain, not their shared one. Then verify it independently: send yourself an issue, open the raw headers, and check for three `pass` results. Do not trust the dashboard's green tick.
 
-<Figure
-  src={yesImage}
-  width={100}
-  height={100}
-  alt="A soft gradient of cream, peach and coral"
-  caption="Authentication comes first. Without it, nothing else you do is checkable."
-  credit="Photo by Codioful"
-  creditUrl="https://www.pexels.com/photo/a-light-color-gradient-7130554/"
-  width="wide"
-/>
 
 ## 2. Engagement, and specifically recent engagement
 

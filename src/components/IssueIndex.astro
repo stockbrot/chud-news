@@ -1,5 +1,6 @@
 ---
 import IssueMeta from "@/components/IssueMeta.astro";
+import IssueScore from "@/components/IssueScore.astro";
 import TopicChip from "@/components/TopicChip.astro";
 import { formatYear, issueHref, issueNumber, type Issue } from "@/lib/issues";
 
@@ -34,7 +35,6 @@ const rows = issues.map((issue, index) => ({
         {isNewYear && <p class="index__year t-number">{year}</p>}
         <a class="index__row" href={issueHref(issue)}>
           <span class="index__no">{issueNumber(issue)}</span>
-
           <div class="index__main">
             <Heading class="index__title">{issue.data.title}</Heading>
             {showExcerpt && <p class="index__excerpt">{issue.data.excerpt}</p>}
@@ -46,7 +46,7 @@ const rows = issues.map((issue, index) => ({
             <span class="index__topic">
               <TopicChip topic={issue.data.topic} linked={false} />
             </span>
-
+            <IssueScore score={issue.data.score} />
             <IssueMeta issue={issue} showWriter={false} class="index__meta" />
           </span>
         </a>

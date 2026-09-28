@@ -34,6 +34,12 @@ const byNewest = (a: Issue, b: Issue) => b.data.date.getTime() - a.data.date.get
 export const publishedIssues = (issues: Issue[]) =>
   issues.filter((issue) => !issue.data.draft).sort(byNewest);
 
+/** Developer totals start at 1000 and include every published issue. */
+export const developerScore = (issues: Issue[], name: string) =>
+  1000 + publishedIssues(issues)
+    .filter((issue) => writerSlug(issue.data.author.name) === writerSlug(name))
+    .reduce((total, issue) => total + issue.data.score, 0);
+
 export const byTopic = (issues: Issue[], topic: Topic) =>
   publishedIssues(issues).filter((issue) => issue.data.topic === topic);
 

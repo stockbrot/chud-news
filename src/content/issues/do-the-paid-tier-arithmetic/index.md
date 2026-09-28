@@ -2,11 +2,11 @@
 issue: 12
 title: "Do the paid-tier arithmetic first"
 excerpt: "Two percent of your list will pay. Multiply that out before you spend three months building something to sell them."
-topic: "Money"
+topic: "Updates"
 date: 2026-09-10
 author:
-  name: "Sam Patel"
-  role: "Audience"
+  name: "Epic Games"
+  role: "Developer & Publishing Company"
 cover:
   src: "./cover.jpg"
   alt: "A bright gradient of red, orange, blue and pink"

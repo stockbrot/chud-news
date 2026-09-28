@@ -2,11 +2,11 @@
 issue: 11
 title: "The forty people who opened nothing"
 excerpt: "Every list has a dormant third. Most advice says to win them back. The arithmetic says to let them go, and to do it on purpose."
-topic: "Growth"
+topic: "Redemption"
 date: 2026-09-03
 author:
-  name: "Sam Patel"
-  role: "Audience"
+  name: "Crytek"
+  role: "Engine & Game Developer"
 cover:
   src: "./cover.jpg"
   alt: "A gradient running from red and orange into green"

@@ -58,7 +58,7 @@ Also in `src/config/site.ts`:
 [src/config/topics.ts](./src/config/topics.ts) defines them once:
 
 ```ts
-export const topics = ["Craft", "Design", "Growth", "Money", "Tools", "Interviews"] as const;
+export const topics = ["Craft", "Design", "Growth", "Money", "Tools", "Developer"] as const;
 ```
 
 Adding, renaming, or removing a topic updates the frontmatter enum, the header navigation, the footer, the topic index, and the routes in one edit. Every topic needs an entry in `topicMeta` with a one-line `summary`.
