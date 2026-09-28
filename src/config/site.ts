@@ -9,7 +9,7 @@ export const siteConfig = {
   /** Set SITE_URL to the production URL in Cloudflare Pages build variables. */
   siteUrl: process.env.SITE_URL || process.env.CF_PAGES_URL || "http://localhost:4321",
   authorName: "Tanis W.",
-  email: "hello@example.com",
+  email: "secret@example.com",
   language: "en",
   dateLocale: "en-US",
   locale: "en_US",
