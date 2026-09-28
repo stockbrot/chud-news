@@ -29,7 +29,7 @@ const Name = linked ? "a" : "span";
 <p class:list={["meta", className]}>
   {
     showWriter && (
-      <Name class="meta__author" {...(linked ? { href: `/writers/${writerSlug(author.name)}/` } : {})}>
+      <Name class="meta__author" {...(linked ? { href: `/devs/${writerSlug(author.name)}/` } : {})}>
         <Avatar name={author.name} size="sm" />
         {author.name}
       </Name>

@@ -17,6 +17,7 @@ cover:
 import Figure from "@/components/content/Figure.astro";
 import warmGradient from "./photo-1.jpg";
 import coolGradient from "./photo-2.jpg";
+import yesImage from "../../images/yes.jpg";
 
 Deliverability advice online is about eighty percent folklore. Avoid the word "free". Never use more than three links. Do not attach images. Keep your text-to-image ratio at 60:40, a number someone invented in 2011 and nobody has questioned since.
 
@@ -29,7 +30,9 @@ If SPF, DKIM and DMARC are not set up correctly on your sending domain, nothing 
 Your provider will have a page on this. Do it properly, with your own domain, not their shared one. Then verify it independently: send yourself an issue, open the raw headers, and check for three `pass` results. Do not trust the dashboard's green tick.
 
 <Figure
-  src={warmGradient}
+  src={yesImage}
+  width={100}
+  height={100}
   alt="A soft gradient of cream, peach and coral"
   caption="Authentication comes first. Without it, nothing else you do is checkable."
   credit="Photo by Codioful"

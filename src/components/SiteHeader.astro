@@ -33,14 +33,14 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     <div class="header-actions">
       <button type="button" class="header-search" data-search-open>
         <Icon name="search" size={15} />
-        <span>Search issues</span>
+        <span>Search posts</span>
         <kbd aria-hidden="true">/</kbd>
       </button>
 
       <button
         type="button"
         class="icon-btn header-search-icon"
-        aria-label="Search issues"
+        aria-label="Search posts"
         data-search-open
       >
         <Icon name="search" size={18} />
@@ -51,7 +51,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
         <Icon name="moon" size={18} class="theme-moon" />
       </button>
 
-      <a class="btn header-cta" href="/#subscribe">Subscribe</a>
+      <!-- <a class="btn header-cta" href="/#subscribe">Subscribe</a> -->
 
       <button
         type="button"
@@ -73,12 +73,12 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
 <dialog class="search-dialog" data-search-dialog aria-label={`Search ${siteConfig.name}`}>
   <form class="search-field" action="/search/" method="get" role="search">
     <Icon name="search" size={19} class="t-faint" />
-    <label class="sr-only" for="site-search">Search issues</label>
+    <label class="sr-only" for="site-search">Search posts</label>
     <input
       id="site-search"
       name="q"
       type="search"
-      placeholder="Search issues, topics, writers…"
+      placeholder="Search posts, topics, companies…"
       autocomplete="off"
       enterkeyhint="search"
       data-search-input
@@ -129,7 +129,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     const query = input.value.trim();
     if (!query) {
       const items = await runtime.load();
-      status.textContent = `Search ${items.length} issues by title, topic, number, or writer.`;
+      status.textContent = `Search ${items.length} posts by title, topic, number, or company.`;
       results.innerHTML = "";
       return;
     }

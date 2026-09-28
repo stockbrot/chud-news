@@ -1,13 +1,13 @@
 import { topics, topicSlug } from "./topics";
 
 export const siteConfig = {
-  name: "Mailer",
-  tagline: "The craft of sending a newsletter",
-  title: "Mailer - A newsletter Astro theme",
+  name: "Chud News",
+  tagline: "Gaming news without the corporate leash.",
+  title: "Chud News - Unbiased gaming related news",
   description:
-    "An Astro theme for newsletters: numbered issues, a readable archive, topic pages, per-writer archives, and a signup form wherever it belongs.",
+    "Unfiltered gaming news, blunt reviews, and strict publisher accountability. No fluff, no PR spin, and zero patience for corporate BS, built by gamers who actually play.",
   siteUrl: "https://mailer.xocoweb.workers.dev",
-  authorName: "Andrei Alba",
+  authorName: "Tanis W.",
   email: "hello@example.com",
   language: "en",
   dateLocale: "en-US",
@@ -17,7 +17,7 @@ export const siteConfig = {
   /** Reading speed behind the "min read" line. Counted from the body at build time. */
   wordsPerMinute: 225,
   /** What a first-time visitor gets. "system" follows the OS; a reader's toggle wins either way. */
-  defaultColorMode: "light",
+  defaultColorMode: "dark",
   /**
    * Lets a `Bookmark` fill itself in from the linked page's Open Graph tags at
    * build time. Every lookup is cached in `.astro`, times out, and falls back
@@ -26,15 +26,15 @@ export const siteConfig = {
    */
   fetchBookmarkPreviews: true,
   /** Printed under the masthead and in the footer. Keep it to one sentence. */
-  bio: "Twice a month, one issue about writing, designing, and sending a newsletter people finish.",
+  bio: "Bringing the news to you without the corporate filter.",
   /** Shown beside the signup form. Set it to whatever your schedule actually is. */
-  cadence: "Every other Thursday",
+  cadence: "As Soon As Possible",
   /**
    * The byline that fronts the About page. `name` must match an `author.name`
    * used in issue frontmatter — the block links to that writer's archive.
    */
   editor: {
-    name: "Mara Chen",
+    name: "Doctor Chud",
     title: "Who writes it",
   },
   /** The one feed, at `/rss.xml`, advertised in the head of every page. */
@@ -49,13 +49,13 @@ export const siteConfig = {
    * form renders disabled rather than pretending to work.
    */
   newsletter: {
-    enabled: false,
+    enabled: true,
     action: "",
     method: "post",
     emailFieldName: "email",
     title: "Get the next issue",
     description:
-      "One email every other Thursday. No sequences, no upsells, unsubscribe in a click.",
+      "One email every Thursday. No sequences, no upsells, unsubscribe in a click.",
     terms: "We store your address to send the newsletter, and nothing else.",
     /** Printed under the form as social proof. Leave empty to hide it. */
     proof: "2,400 readers",
@@ -75,9 +75,9 @@ export const topicNavigation = topics.map((topic) => ({
 
 /** The bar. Anything longer belongs in the footer. */
 export const primaryNavigation = [
-  { label: "Issues", href: "/archive/" },
+  { label: "Home", href: "/archive/" },
   { label: "Topics", href: "/topics/" },
-  { label: "Writers", href: "/writers/" },
+  { label: "Developers", href: "/devs/" },
   { label: "About", href: "/about/" },
   { label: "Styleguide", href: "/styleguide/" },
 ];
@@ -86,9 +86,9 @@ export const footerNavigation = [
   {
     title: "Read",
     links: [
-      { label: "All issues", href: "/archive/" },
+      { label: "All posts", href: "/archive/" },
       { label: "Topics", href: "/topics/" },
-      { label: "Writers", href: "/writers/" },
+      { label: "Developers", href: "/devs/" },
       { label: "Search", href: "/search/" },
     ],
   },

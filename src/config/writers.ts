@@ -1,8 +1,8 @@
 import type { ImageMetadata } from "astro";
-import irisNovak from "@/assets/writers/iris-novak.jpg";
-import leahMorgan from "@/assets/writers/leah-morgan.jpg";
-import maraChen from "@/assets/writers/mara-chen.jpg";
-import samPatel from "@/assets/writers/sam-patel.jpg";
+import irisNovak from "@/assets/devs/iris-novak.jpg";
+import leahMorgan from "@/assets/devs/leah-morgan.jpg";
+import maraChen from "@/assets/devs/mara-chen.jpg";
+import samPatel from "@/assets/devs/sam-patel.jpg";
 
 /**
  * Writer profiles, keyed by the `author.name` in issue frontmatter. A name with

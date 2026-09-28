@@ -12,12 +12,12 @@ const issues = publishedIssues(await getCollection("issues"));
 const writers = allWriters(issues);
 ---
 
-<BaseLayout title="Writers" description={`Who writes ${siteConfig.name}, and what they cover.`}>
+<BaseLayout title="Developers" description={`Companies rated on ${siteConfig.name}`}>
   <SiteHeader />
   <main id="content">
     <div class="container">
       <PageIntro
-        title="Writers"
+        title="Companies"
         description={`Everyone who files for ${siteConfig.name}, each with their own archive.`}
         note={`${writers.length} ${writers.length === 1 ? "writer" : "writers"}`}
       />
