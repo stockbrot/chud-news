@@ -6,7 +6,8 @@ export const siteConfig = {
   title: "Chud News - Unbiased gaming related news",
   description:
     "Unfiltered gaming news, blunt reviews, and strict publisher accountability. No fluff, no PR spin, and zero patience for corporate BS, built by gamers who actually play.",
-  siteUrl: "https://mailer.xocoweb.workers.dev",
+  /** Set SITE_URL to the production URL in Cloudflare Pages build variables. */
+  siteUrl: process.env.SITE_URL || process.env.CF_PAGES_URL || "http://localhost:4321",
   authorName: "Tanis W.",
   email: "hello@example.com",
   language: "en",
