@@ -99,7 +99,7 @@ export const footerNavigation = [
     links: topicNavigation,
   },
   {
-    title: "Mailer",
+    title: "Chud News",
     links: [
       { label: "About", href: "/about/" },
       { label: "Subscribe", href: "/#subscribe" },

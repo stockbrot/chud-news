@@ -12,35 +12,104 @@ import { siteConfig } from "@/config/site";
     <div class="reading">
       <PageIntro
         title="Privacy"
-        description="A starting point, not legal advice. Replace it with a policy that describes what your own setup actually does."
+        description="No ads. No selling your data. Here’s what happens when you use the site."
       />
     </div>
 
     <section class="reading section--tight">
       <div class="prose">
-        <h2>What is collected</h2>
+        <p class="t-small t-dim">Last updated: 30 September 2026</p>
+
+        <h2>Who runs this site</h2>
         <p>
-          If you subscribe, your email address is stored by the newsletter provider configured for
-          this site, so the newsletter can be sent to you. Nothing else is required.
+          {siteConfig.name} is operated by <strong>OPERATOR NAME</strong>, responsible for
+          the personal data handled through this site. Address: <strong>OPERATOR ADDRESS</strong>.
+          For privacy questions or requests, contact <strong>PRIVACY EMAIL</strong>.
         </p>
 
-        <h2>How it is used</h2>
+        <h2>Visiting the site</h2>
         <p>
-          To send the newsletter, to answer you if you write in, and to meet legal obligations.
-          Addresses are never sold or traded.
+          Cloudflare Pages hosts and delivers the site. When you visit, Cloudflare processes
+          technical information such as your IP address, requested URL, browser information,
+          and request time to deliver pages and protect against abuse. Its security features
+          may use cookies, depending on the protection applied. See
+          the <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare privacy policy</a>
+          and <a href="https://developers.cloudflare.com/fundamentals/reference/policies-compliances/cloudflare-cookies/">cookie information</a>.
         </p>
 
-        <h2>Analytics</h2>
+        <h2>Preferences and search</h2>
         <p>
-          This theme ships with no analytics and no third-party scripts. Anything you add is yours
-          to disclose here.
+          Your light or dark theme choice is saved in your browser under <code>mailer-theme</code>.
+          It stays there until you change it or clear the site’s browser data. We don’t use it to
+          track you. Search matches articles in your browser; we don’t maintain a separate search-history database.
+          Search terms included in a page URL can still appear in hosting request logs.
         </p>
 
-        <h2>Removing your data</h2>
+        <h2>Comments</h2>
         <p>
-          Every post carries a one-click unsubscribe link, which removes the address from the
-          sending list. For anything else, write to{" "}
-          <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
+          Issue pages load Giscus, which displays comments from GitHub Discussions. Your browser
+          connects to these services when comments load, even if you don’t post. To comment,
+          you sign in with GitHub. Your comment, GitHub username, and profile picture are public.
+          Don’t post anything you want kept private.
+        </p>
+        <p>
+          Giscus stores an encrypted sign-in token in your browser when you sign in.
+          Comments remain on GitHub until removed; you can manage your own comments there.
+          See the <a href="https://github.com/giscus/giscus/blob/main/PRIVACY-POLICY.md">Giscus privacy policy</a>
+          and <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub privacy statement</a>.
+        </p>
+
+        <h2>Emotes and outside links</h2>
+        <p>
+          Emotes load from 7TV and BetterTTV. Loading one sends its provider your IP address
+          and browser request information, and may send referrer information. Their policies:
+          <a href="https://7tv.app/legal/privacy">7TV</a> and
+          <a href="https://betterttv.com/privacy">BetterTTV</a>.
+          Following an outside link or using a social sharing link takes you to a service with
+          its own privacy rules.
+        </p>
+
+        <h2>Email and the newsletter</h2>
+        <p>
+          If you email us, we use your address and message to reply and handle your request.
+          We keep correspondence only as long as needed for that purpose or any legal obligation.
+          Email provider: <strong>EMAIL PROVIDER</strong>.
+          Newsletter signup is currently inactive and does not submit email addresses.
+          We’ll update this policy with the provider, consent, and unsubscribe details before enabling it.
+        </p>
+
+        <h2>Ads and analytics</h2>
+        <p>
+          We don’t run ads or sell personal data. The site’s code has no advertising trackers
+          or analytics scripts configured.
+          <strong> ANALYTICS SETUP: confirm whether Cloudflare Web Analytics or other dashboard-injected tracking is enabled, then replace this note with its details.</strong>
+        </p>
+
+        <h2>Why we process data</h2>
+        <p>
+          Where EU or UK data protection law applies, we rely on legitimate interests to deliver
+          and secure the site, display its content and discussions, and answer messages
+          (GDPR Article 6(1)(f)). We use consent where required for optional tracking or subscriptions
+          (Article 6(1)(a)), and legal obligation where we must retain information by law
+          (Article 6(1)(c)). Reading the site does not count as consent to optional tracking.
+        </p>
+
+        <h2>Storage and your rights</h2>
+        <p>
+          Providers may process data outside your country, including in the United States.
+          Their linked policies explain retention and international-transfer safeguards.
+          We don’t set their independent retention periods.
+        </p>
+        <p>
+          Depending on applicable law, you can request access, correction, deletion, restriction,
+          or a portable copy of your data, and object to processing based on legitimate interests.
+          You can withdraw consent at any time without affecting earlier lawful processing.
+          Contact <strong>PRIVACY EMAIL</strong> to make a request. You can also complain to your
+          local data protection authority. For data held independently by GitHub or another provider,
+          you may need to contact them directly.
+        </p>
+        <p>
+          We’ll update this page when our setup changes and show the latest revision date above.
         </p>
       </div>
     </section>
