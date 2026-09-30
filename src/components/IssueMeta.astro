@@ -1,6 +1,6 @@
 ---
 import Avatar from "@/components/ui/Avatar.astro";
-import { formatDate, readMinutes, writerSlug, type Issue } from "@/lib/issues";
+import { formatDate, writerSlug, type Issue } from "@/lib/issues";
 
 /**
  * "Mara Chen · Sep 17, 2026 · 6 min read" — the same line on a card, an index
@@ -9,7 +9,7 @@ import { formatDate, readMinutes, writerSlug, type Issue } from "@/lib/issues";
 interface Props {
   issue: Issue;
   showWriter?: boolean;
-  showReadTime?: boolean;
+  // showReadTime?: boolean;
   /** Links the writer's name. Off inside a card, where the whole block is a link. */
   linked?: boolean;
   class?: string;
@@ -18,7 +18,7 @@ interface Props {
 const {
   issue,
   showWriter = true,
-  showReadTime = true,
+  // showReadTime = true,
   linked = false,
   class: className = "",
 } = Astro.props;
