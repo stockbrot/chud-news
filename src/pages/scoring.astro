@@ -4,159 +4,83 @@ import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import PageIntro from "@/components/PageIntro.astro";
 import IssueScore from "@/components/IssueScore.astro";
+import { siteConfig } from "@/config/site";
 
-const penalties = [
-  [-25, "Annoying shit that won't go away", "Menus, controls, or matchmaking keep acting up. You can still play, but the same problem keeps getting in the way."],
-  [-50, "You paid to sit in a queue", "Loads of players spend a big chunk of the first paid-access day waiting or getting kicked out. A brief rush at launch doesn't count."],
-  [-75, "Crashes, stutters, and other broken crap", "The game keeps crashing or running badly on hardware it claims to support. We name the platform and game version we checked."],
-  [-100, "You can't progress or get what you paid for", "A bug blocks progress, a big advertised feature misses its promised release, or bought items repeatedly fail to show up."],
-  [-150, "Players get properly screwed", "Lots of saves get wiped, a main mode stays broken for days, or a big paid feature gets removed without a fair fix or refund."],
-  [-50, "They made the grind worse to sell the shortcut", "After you buy the game, they add a serious grind or push you harder to spend. We show what changed and how it affects players."],
-  [-100, "Swipe your card to win", "They add paid advantages or make progress so painful that spending money becomes the practical way to compete."],
-  [-150, "The sales pitch was bullshit", "They sold you something the game doesn't actually have. We show the exact claim and what's missing. Guessing what they were thinking doesn't count as proof."],
-  [-75, "That thing they promised? Gone", "They drop something people paid for or were clearly promised, without a decent explanation or fix. Slipping past a rough release date isn't enough."],
-  [-100, "They leave a serious exploit wide open", "A known exploit keeps hurting players after the team has had a fair chance to stop it. We explain the damage, how long they had, and why that was enough time."],
-] as const;
-const rewards = [
-  [25, "More people can actually play", "A useful new feature helps people who struggled to play before, such as players with disabilities. Moving a settings button doesn't count."],
-  [25, "They make it up to players", "Useful refunds, restored progress, or something else that fairly makes up for the damage. Doing only what the law or their own terms already require earns nothing extra."],
-  [50, "A damn good launch", "A polished game, strong support, and unusually good value from day one. Simply working as advertised is the bare minimum."],
-  [50, "A solid free update", "A useful new mode, a big improvement for players with disabilities, or changes that make playing much less of a pain. It has to be out and working."],
-  [100, "A big free expansion", "A proper chunk of new content or new ways to play, with no extra bill for people who already own the game."],
-  [150, "A huge free expansion that delivers", "Enough good new stuff to feel like a full expansion, with a big benefit for players. We explain why it deserves more than +100."],
-  [75, "They stop treating players like wallets", "They remove a shitty spending system, add proper offline play, or help keep the game playable after official support ends."],
-  [50, "They stick with an older game", "A clear example of long-term support that actually helps players. Once per game per year, and never for updates we've already rewarded."],
-] as const;
-const fixes = [
-  [25, "Fixed within 24 hours"], [15, "Fixed after 24 hours, but within 3 days"],
-  [10, "Fixed after 3 days, but within a week"], [5, "Fixed after more than a week"],
+
+const launchScores = [
+  [50, "More than promised", "Delivers, plays brilliantly, and gives us more than we expected."],
+  [25, "Did their fucking job", "A solid game that delivers what it sold."],
+  [-25, "Rough edges", "Technical trouble, missing features, or annoying design dragging it down."],
+  [-50, "Should've been better", "Serious flaws in delivery, gameplay, writing, or value."],
+  [-100, "The sales pitch fell apart", "Major broken promises, widespread failures, or a deeply disappointing game."],
+  [-150, "What the fuck did we pay for?", "Broken, badly misrepresented, or just miserable to play. Explain which."],
 ] as const;
 ---
 
-<BaseLayout title="Scoring guide" description="Developers start at 1,000. Screw players over, lose points. Do good work, earn them back. Here's how we score it.">
+<BaseLayout title="Scoring guide" description="Promises, gameplay, writing, and value. Our scores include our opinions. Here's how the points work.">
   <SiteHeader />
   <main id="content">
     <div class="reading">
-      <PageIntro title="Do good shit. Earn points." description="Every developer starts at 1,000. Screw players over and the score drops. Make good games, fix your mess, and give players something worth a damn? It goes up. No PR bullshit required." note="Scoring guide · Version 1.0 · September 2026" />
+      <PageIntro
+        title="Deliver. And make it worth playing."
+        description="A game can run perfectly and still be shit. We judge what shipped, how it plays, and whether it was worth your money."
+        note="Scoring guide · Version 2.2 · September 2026"
+      />
     </div>
-    <section class="container section--tight" aria-label="Scoring basics">
-      <div class="score-basics">
-        <div><span class="t-meta">Everyone starts here</span><strong>1,000</strong><p>Average. No praise earned. No points lost.</p></div>
-        <div><span class="t-meta">The usual good and bad</span><strong>±150 max</strong><p>Up to 150 gained or lost for each separate thing.</p></div>
-        <div><span class="t-meta">The really big fuckups</span><strong>−250 to −500</strong><p>For serious damage we can actually prove.</p></div>
-      </div>
-    </section>
     <div class="reading section--tight prose scoring-guide">
-      <nav aria-label="On this page" class="guide-nav">
-        <a href="#principles">The basics</a><a href="#penalties">Lose points</a><a href="#rewards">Earn points</a><a href="#exceptions">Big fuckups</a><a href="#recovery">Fix your mess</a><a href="#examples">Examples</a><a href="#updates">Updating a post</a>
-      </nav>
+      <h2 id="principles">The basics</h2>
+      <p>Developers start at <strong>1,000</strong>. Add each game's running score. No resets.</p>
+      <p><strong>These are our judgments, not scientific measurements.</strong> Boring combat, weak writing, shit value, or a game that plays itself can lose points even without a single crash. You can disagree. That's how opinions work.</p>
+      <p>Heavy-handed politics or social preaching can lose points when we think it hijacks the story or turns characters into mouthpieces. Show the actual scene and explain the problem. “We hated this” is an opinion; “they lied about this” needs receipts.</p>
 
-      <h2 id="principles">How the numbers work</h2>
-      <p>Start with <strong>1,000</strong>. Add or subtract the score from each published post about that developer. That's their total.</p>
-      <p>A −50 post takes them to <strong>950</strong>. A later +100 post takes them to <strong>1,050</strong>. There's no maximum or minimum. Points don't fade away with time, and January doesn't wipe the slate clean.</p>
-      <p>Above 1,000 means we've scored more good than bad. Below it means the opposite. A developer on 1,000 might have done nothing we've covered yet, or earned back everything they lost. Read the posts too. We haven't reviewed every bloody thing every studio has ever done.</p>
+      <h2 id="launch">One launch. One score.</h2>
+      <p><strong>The numbers are guideposts.</strong> +23 or +12 is fine. The usual launch range is <strong>−150 to +50</strong>. Anything outside it needs a clearly labelled exception and reasons. No pretending personal taste is a benchmark.</p>
+      <div class="rubric">
+        {launchScores.map(([score, title, detail]) => (
+          <article class="rubric-row">
+            <IssueScore score={score} />
+            <div><h3>{title}</h3><p>{detail}</p></div>
+          </article>
+        ))}
+      </div>
+
+      <h2 id="recovery">Fix your shit. Recover half.</h2>
+      <p>Working fixes, delivered promises, and changes that address our criticisms can earn back <strong>at most half the launch loss, combined</strong>. Show what improved. Round the cap down to a whole point: −25 allows +12 back.</p>
+      <p>Apologies and roadmaps earn <strong>zero</strong>. “It's coming later” can suck it. Shipping it late doesn't make the launch good.</p>
+
+      <h2 id="rewards">Extra work earns extra credit.</h2>
+      <p><strong>+25</strong> for substantial free additions. <strong>+50</strong> for a major free expansion. Beyond the original promises, released and working. One award per update; no double-counting.</p>
+      <p>Update awards are flexible too, up to +50 each. Recovery still stops at half the launch loss. Preferences about length or difficulty alone aren't broken promises.</p>
+      <p>Paid DLC earns no bonus. Extra work can take the total above its starting point. The launch penalty stays in the history.</p>
+
+      <h2 id="examples">The maths</h2>
+      <p><strong>−100</strong> launch → <strong>+50</strong> recovery → <strong>+50</strong> free expansion = <strong>0</strong> from this game. Back to even by doing more than they owed you.</p>
+
+      <h2 id="updates">Bring receipts. Keep it short.</h2>
       <ul>
-        <li><strong>Bring receipts.</strong> Say what happened, when, on which platform and game version, and who it affected. Link the proof. Bad sales, a tiny player count, ugly art, or us disliking a game don't cost points on their own.</li>
-        <li><strong>One problem gets one penalty.</strong> If the same server failure causes queues, disconnects, and failed logins, that's one fuckup. Pick the penalty that fits. Don't charge three times for it.</li>
-        <li><strong>Separate problems can add up.</strong> A post can go past ±150 if it covers several different things. Explain each one. Don't chop one problem or update into pieces to squeeze out more points.</li>
-        <li><strong>Doing your job isn't a miracle.</strong> An apology, roadmap, patch announcement, paid DLC, or routine bug fix doesn't automatically earn points. Fix bonuses apply to problems we've already deducted points for.</li>
-        <li><strong>Blame whoever made the call.</strong> That might be the developer or the publisher. Don't automatically punish both for one decision.</li>
-        <li><strong>If we got it wrong, we fix it.</strong> Remove the wrong penalty and explain why. That's us correcting our own bullshit, not the developer earning a bonus.</li>
+        <li>Actual public promises. Not fan theories. Clearly disclosed early-access limitations aren't broken promises.</li>
+        <li>One issue per game: promise, result, score, dated updates. Link evidence and name the platform/version. Old games get the same rules.</li>
+        <li>Separate facts from opinions. Unverified claims don't cost points. Factual mistakes get labelled corrections; changed opinions get explained updates.</li>
       </ul>
-
-      <h2>“It's early access” only gets you so far</h2>
-      <p>If the store page clearly says something isn't finished yet, we're not docking points because it isn't finished. We judge what they're selling now, not the dream version they might make someday.</p>
-      <p>But if they can take your money, they can be honest about what you're buying. Payments should work, getting into the game shouldn't be a nightmare, and your progress shouldn't vanish. “Early access” isn't a magic get-out-of-bullshit card.</p>
-      <p>For queues, we check real wait times across the affected regions and how long the mess lasted. A badly disrupted first day gets <strong>−50</strong>. If it drags on or gets much worse, we can change that to <strong>−100 or −150</strong>. We replace the old penalty. We don't pile the new one on top.</p>
-
-      <h2 id="penalties">What loses points</h2>
-      <p>Pick the amount below that fits the problem. If a smaller penalty makes more sense, explain why and use steps of five points. The usual limit is <strong>−150 for one problem</strong>. The really big exceptions are further down.</p>
-      <div class="rubric">
-        {penalties.map(([score, title, detail]) => <article class="rubric-row"><IssueScore score={score} /><div><h3>{title}</h3><p>{detail}</p></div></article>)}
-      </div>
-
-      <h2 id="rewards">What earns points</h2>
-      <p>We care about what players get. Nobody gets a medal for writing long patch notes.</p>
-      <p>A free content update gets <strong>one overall award: +50, +100, or +150</strong>. Don't give it points for the new mode, then more points for its settings, then more for its menu fixes. Pick one amount for the whole update. Smaller changes can use the other rewards below.</p>
-      <div class="rubric">
-        {rewards.map(([score, title, detail]) => <article class="rubric-row"><IssueScore score={score} /><div><h3>{title}</h3><p>{detail}</p></div></article>)}
-      </div>
-      <p>Another proper expansion later can earn more points. Recycled rewards and a sale don't count. Neither does finally delivering something people already paid for. That's fixing your mess, and the rules for that are below.</p>
-
-      <h2 id="exceptions">Some fuckups deserve more than −150</h2>
-      <p>A game flopping doesn't prove it was a cash grab. For these penalties, we need proof of serious damage, a clear explanation, and another check of the evidence before the post goes live.</p>
-      <p>Pick <strong>one</strong> of these amounts for the same disaster. It replaces the smaller penalties for that disaster. It doesn't sit on top of them.</p>
-      <div class="rubric">
-        <article class="rubric-row"><IssueScore score={-250} /><div><h3>They sold a game that barely works</h3><p>The main game is badly broken or unavailable for lots of players for at least 72 hours. Or a major part of what they sold is simply missing. A few bugs or trouble on one small set of machines isn't enough.</p></div></article>
-        <article class="rubric-row"><IssueScore score={-350} /><div><h3>They left paying players with nothing</h3><p>The main game stays broadly unplayable for at least seven days. Or they permanently pull paid access without a fair refund or other fix. Show how many players were hurt and how the response fell short.</p></div></article>
-        <article class="rubric-row"><IssueScore score={-500} /><div><h3>They knowingly screwed people over</h3><p>Strong proof that they deliberately misled buyers, lots of players lost paid access, purchases, or progress, and no fair fix followed. This is the biggest penalty for one disaster. Explain why even −350 isn't enough. If the response is just PR excuses, they can suck it.</p></div></article>
-      </div>
-      <p>A separate disaster can get its own penalty. The same disaster wearing three different headlines cannot.</p>
-
-      <h2 id="recovery">Fix your shit. Get some points back.</h2>
-      <p>The timer starts when players first get hit by the problem, not when we write about it. If we don't know the exact start, use the first report we can trust and say so.</p>
-      <p>The timer stops when the fix reaches those players and works. “We're looking into it” doesn't stop the clock.</p>
-      <div class="fix-grid">
-        {fixes.map(([score, label]) => <div><IssueScore score={score} /><p>{label}</p></div>)}
-      </div>
-      <p>Give <strong>one fix bonus per problem</strong>. Wait at least 48 hours to check that it stays fixed. The bonus still uses the time the fix came out, so that waiting period doesn't cost the developer points.</p>
-      <p>If it's only half-fixed, wait. If the fix breaks again, take back the fix bonus and explain it in the post.</p>
-      <p>After <strong>30 straight days</strong> of things working again, they can earn more back: <strong>up to half the original penalty, but never more than +150</strong>. Round down to the nearest five points. Give less if the results don't deserve the full amount, and explain why. This bonus happens once per problem.</p>
-      <p><strong>Fixing a mess, making up for it, and keeping it fixed can never earn back more than that mess cost.</strong> Lose 50 points? Those bonuses together stop at +50. You don't get to break your own game, repair it, and call yourself a hero.</p>
-      <p>New stuff is different. A big free expansion that adds more than the game originally promised can earn its own points.</p>
-      <p>And yes, a developer can come back from a massive fuckup. Keep shipping good, worthwhile free updates and those points add up. They can reach 1,000 again and go higher. We keep the receipts for the bad stuff, but we're not going to pretend the good stuff didn't happen.</p>
-
-      <h2 id="examples">Here's what that looks like</h2>
-      <h3>The queues suck. The devs get on it.</h3>
-      <p>Loads of people can't get in on day one: <strong>−50</strong>. The developer drops from 1,000 to <strong>950</strong>.</p>
-      <p>They fix it after 18 hours. We check that it holds for 48 hours: <strong>+25</strong>. The post's score is now <strong>−25</strong>, so the developer sits at <strong>975</strong>.</p>
-      <p>It stays fixed for 30 days. We award the remaining <strong>+25</strong>. That post now adds up to <strong>0</strong>, and the developer is back at <strong>1,000</strong>. They cleaned up their mess. Fair enough.</p>
-      <h3>They screw up badly. Then actually turn it around.</h3>
-      <p>Made-up example: a studio takes away a big part of what people paid to play and gives them nothing back. That's <strong>−350</strong>.</p>
-      <p>Much later, they bring it back. The late fix earns <strong>+5</strong>. They also make it up to players for <strong>+25</strong>. After 30 stable days, we award <strong>+120</strong> for the recovery. Then they release two proper free expansions, worth <strong>+100 each</strong>.</p>
-      <ol class="comeback">
-        {[
-          { label: "Paid access pulled, no fair fix", delta: -350, total: 650 },
-          { label: "They finally bring it back", delta: 5, total: 655 },
-          { label: "They make it up to players", delta: 25, total: 680 },
-          { label: "It stays fixed for 30 days", delta: 120, total: 800 },
-          { label: "First big free expansion", delta: 100, total: 900 },
-          { label: "Another big free expansion", delta: 100, total: 1000 },
-        ].map((step) => <li><span>{step.label}</span><IssueScore score={step.delta} /><strong>{step.total.toLocaleString("en-US")}</strong></li>)}
-      </ol>
-      <p>Why +120 for recovery instead of the allowed +150? In this example, some player losses still haven't been made right. We explain those in the post. The studio gets back to 1,000 by fixing things and adding good stuff. The old fuckup stays in the record.</p>
-
-      <h2 id="updates">Show the maths in every post</h2>
-      <p>Write down what happened, the date, the points added or lost, and the new post total. Link the proof. Say what we checked and what we still don't know. If something isn't confirmed, say so. Rumours don't move the score.</p>
-      <blockquote><p><strong>Launch day:</strong> Players stuck in queues, −50. Proof: recorded wait times and the server status log.<br /><strong>Update:</strong> Fixed at hour 18. Still working 48 hours later, +25. Post total: −25.<br /><strong>Day 31:</strong> Working for 30 straight days, +25. Post total: 0.</p></blockquote>
-      <p>If you update the original post, change its score to the new total. If you write a separate follow-up, give that new post only the new points and link the old one.</p>
-      <p><strong>Don't put the same +25 in both posts.</strong> That's counting it twice. Date your updates and keep the old explanation so people can see what changed.</p>
-      <p>We decide the points ourselves. A patch or a new date on a post doesn't magically change the score. If we change these rules later, we'll publish a new version and explain it. No quietly rewriting history.</p>
+      <p class="t-small t-dim">Version 2.2 explicitly includes gameplay, writing, value, and editorial opinion. Existing scores aren't automatically recalculated.</p>
     </div>
+
+    <section class="reading section--tight">
+      <p class="t-body t-dim">
+        Corrections or questions? <a class="link" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
+      </p>
+    </section>
+
   </main>
   <SiteFooter />
 </BaseLayout>
 <style>
-  .score-basics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-  .score-basics > div { padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--r-md); }
-  .score-basics strong { display: block; font-size: clamp(1.7rem, 4vw, 2.6rem); margin-block: .5rem; }
-  .score-basics p { color: var(--ink-soft); }
-  .guide-nav { display: flex; flex-wrap: wrap; gap: .6rem 1.2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
   .scoring-guide { padding-bottom: 4rem; }
-  .scoring-guide h2 { scroll-margin-top: 6rem; margin-top: 3rem; }
-  .rubric-row { display: grid; grid-template-columns: 5rem minmax(0, 1fr); align-items: start; gap: 1rem; padding-block: 1.2rem; border-bottom: 1px solid var(--line); }
+  .scoring-guide h2 { scroll-margin-top: 6rem; margin-top: 2rem; }
+  .rubric-row { display: grid; grid-template-columns: 5rem minmax(0, 1fr); align-items: start; gap: 1rem; padding-block: 1rem; border-bottom: 1px solid var(--line); }
   .rubric-row h3 { margin: 0; font-size: 1.1rem; }
-  .rubric-row p { margin: .4rem 0 0; }
-  .fix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-block: 1.5rem; }
-  .fix-grid > div { border: 1px solid var(--line); border-radius: var(--r-md); padding: 1rem; }
-  .fix-grid p { margin-bottom: 0; }
-  .comeback { list-style: none; padding-left: 0; }
-  .comeback li { display: grid; grid-template-columns: minmax(0, 1fr) 4rem 4rem; gap: .5rem; align-items: center; border-bottom: 1px solid var(--line); padding-block: .8rem; }
-  .comeback strong { text-align: right; font-variant-numeric: tabular-nums; }
+  .rubric-row p { margin: .35rem 0 0; }
   @media (max-width: 600px) {
-    .score-basics { grid-template-columns: 1fr; }
     .rubric-row { grid-template-columns: 3.75rem minmax(0, 1fr); gap: .65rem; }
   }
 </style>
-
-

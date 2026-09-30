@@ -69,7 +69,6 @@ export const feedItems = async (issues: Issue[]): Promise<RSSFeedItem[]> =>
       link: issueHref(issue),
       pubDate: issue.data.date,
       description: issue.data.excerpt,
-      author: issue.data.author.name,
       categories: [issue.data.topic],
       content: siteConfig.rss.fullContent ? await renderBody(issue) : undefined,
       enclosure: {

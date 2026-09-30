@@ -1,124 +1,60 @@
 ---
-import { getCollection } from "astro:content";
-import { Image } from "astro:assets";
 import PageIntro from "@/components/PageIntro.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SubscribePanel from "@/components/SubscribePanel.astro";
-import Avatar from "@/components/ui/Avatar.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import aboutImage from "@/assets/site/about.jpg";
 import { siteConfig } from "@/config/site";
-import { writerBio } from "@/config/writers";
-import { allWriters, formatDate, publishedIssues, writerSlug } from "@/lib/issues";
-
-const issues = publishedIssues(await getCollection("issues"));
-const editor = allWriters(issues).find((writer) => writer.name === siteConfig.editor.name);
-const first = issues.at(-1);
 ---
 
-<BaseLayout title="About" description={`What ${siteConfig.name} is, who writes it, and how often it arrives.`}>
+<BaseLayout
+  title="About us"
+  description="Short reviews. No ads, sponsors, or PR leash. We love games and hold the people selling them accountable."
+>
   <SiteHeader />
   <main id="content">
-    <div class="container">
+    <div class="reading">
       <PageIntro
-      title={`About ${siteConfig.name}`}
-      description={siteConfig.bio}
-      note={first ? `Sending since ${formatDate(first.data.date, "long")}` : undefined}
+        title={`About ${siteConfig.name}`}
+        description="We love games. We're tired of the bullshit surrounding them."
       />
     </div>
 
-    <div class="container">
-      <figure class="">
-        <Image
-        src={aboutImage}
-        alt="A wall of numbered apartment mailboxes"
-        loading="eager"
-        />
-        <figcaption class="credit">
-          Photograph by{" "}
-          <a class="link" href="https://www.whitehouse.gov/" rel="noopener noreferrer">
-            Donald Trump
-          </a>
-        </figcaption>
-      </figure>
-    </div>
-
-    <section class="reading section">
+    <section class="reading section--tight" aria-label="What we stand for">
       <div class="prose">
-        <h1>About Chud News</h1>
-        
-        <p>
-          This game launched in an unplayable state 
-          and the publisher expects us to buy battle passes.
-        </p>
+        <h2>Why we're here</h2>
+        <p>Gaming journalism has repeatedly let us down. Our take? Too many outlets seem more worried about losing access, early keys, and industry perks than telling readers a game is shit. We don't give a fuck about staying on a publisher's good side.</p>
 
-        <p>Let's skip the corporate preamble. You didn't come here to read four paragraphs of PR-approved garbage, and we didn't write them.</p>
+        <h2>No ads. No sponsors. No leash.</h2>
+        <p>Our opinions will never be bought with money, preview keys, or special treatment. Nobody gets a softer verdict because keeping them happy might benefit us.</p>
 
-        <p><strong>Chud News exists because gaming journalism has become way too fucking comfortable.</strong></p>
+        <h2>Short reviews. Get on with your day.</h2>
+        <p>What works, what sucks, and why. We don't need to hold you hostage for ten minutes to squeeze out another ad impression. Read it. Agree or disagree. Go play.</p>
 
-        <p>Publishers announce a $70 game with a battle pass, twelve editions, a mountain of preorder bullshit and performance problems, and somehow the article reads like the journalist is afraid the publisher might stop sending him review codes.</p>
+        <h2>Games, not personal drama</h2>
+        <p>We play every major release, plus smaller indie games that make a big splash. Someone's personal drama only matters here if it affects the actual game. Their Twitter argument isn't our fucking beat.</p>
 
-        <p>Meanwhile, some developer says something stupid on Twitter and suddenly it's a 1,500-word "controversy" because apparently a guy with 300 followers is now a threat to the gaming industry.</p>
+        <h2>Nobody gets a pass</h2>
+        <p>Favourite studios included. Make a stupid decision and we'll call it stupid. Act like fucking idiots and expect to hear about it. We don't pull punches, and we aren't pretending every game deserves praise.</p>
 
-        <p>We're not doing that.</p>
+        <h2>Delay it. Finish it. Then sell it.</h2>
+        <p>“The publisher made us ship” doesn't fix the game we paid for. We expect developers to push back, and publishers to give them the time. A delay earns more respect than unfinished garbage. Blame-shifting earns nothing.</p>
+        <p>One game, one issue, updated as things change. Fix your mess and we'll acknowledge it. The launch doesn't disappear from the record.</p>
 
-        <h1>Our Rules</h1>
+        <p>"A delayed game is eventually <strong>good</strong>, but a rushed game is forever <strong>bad</strong>"</p>
 
-        <p><strong>No PR leash:</strong> We don't give a shit who made the game. If it's good, we'll say it's good. If it's broken garbage, we'll say that too. And if the developers actually fix their shit, we'll give them credit.</p>
+        <h2>Our points. Our judgment.</h2>
+        <p>We made up our own scoring system. Developers start at 1,000; each game's score moves that total. Delivery, gameplay, writing, and value all count. It's opinion backed by reasons, not science. <a href="/scoring/">Read the scoring rules.</a></p>
 
-        <p><strong>No fluff:</strong> If the important part of a story can be explained in 30 seconds, we're not turning it into an 800-word SEO abortion just to make you scroll past twelve ads.</p>
-
-        <p><strong>No sacred cows:</strong> Publishers, developers, journalists, influencers, Redditors, Twitter weirdos, console warriors, PC master-race dickheads — everyone gets made fun of. Including us. Nobody gets a special little protection bubble.</p>
-
-        <p><strong>No fake outrage:</strong> Not everything is a "scandal." Sometimes something is genuinely fucked. Sometimes it's just dumb. And sometimes the internet is having a complete meltdown over absolutely nothing.</p>
-
-        <h1>What We Actually Cover</h1>
-
-        <p>New games. Major releases. Bad patches. Great updates. Developer drama. Publisher bullshit. Community backlash. Games getting better. Games getting worse. And the occasional moment where someone actually listens to their players instead of treating them like walking wallets.</p>
-
-        <p>We're not trying to hate everything. That's just as fucking boring as pretending everything is amazing.</p>
-
-        <h1>Who Is This For?</h1>
-
-        <p>Anyone who plays games and wants to know what actually happened without having somebody's PR department shoved down their throat.</p>
-
-        <p>We're not here to tell you what to think. We'll give you the story, tell you what we think is worth a shit, make fun of whoever deserves it, and let you decide.</p>
-
-        <h1>How We Stay Alive</h1>
-
-        <p>No publisher handouts. No pretending a game is good because someone sent us a review code.</p>
-
-        <p>If you like what we're doing and want to keep the lights on, you can throw a few bucks into our <strong>Patreon</strong> or <strong>Buy Me a Coffee</strong>. If not, that's fine too.</p>
-
-        <p>Read the news. Get the information. Go play some fucking games.</p>
-
-
+        <h2>The team? Anonymous.</h2>
+        <p>Judge the article, not the name above it. We're not building writer fan clubs or giving you a reason to dismiss a review because the same person disliked your favourite game. Disagree with the argument. Skip the crybaby grudge.</p>
+        <p>Anonymous doesn't mean above correction. If we got something wrong, bring the receipts.</p>
       </div>
     </section>
 
-    {
-      editor && (
-        <section class="reading section--tight" aria-labelledby="editor-title">
-          <h2 class="t-h3" id="editor-title" style="margin-bottom:1.25rem">
-            {siteConfig.editor.title}
-          </h2>
-          <a class="writer-card" href={`/devs/${writerSlug(editor.name)}/`}>
-            <Avatar name={editor.name} size="lg" />
-            <span class="stack" style="gap:0.3rem">
-              <span class="t-h4">{editor.name}</span>
-              <span class="t-meta">{editor.role}</span>
-              <span class="t-small t-dim" style="margin-top:0.35rem">{writerBio(editor.name)}</span>
-            </span>
-          </a>
-        </section>
-      )
-    }
-
     <section class="reading section--tight">
       <p class="t-body t-dim">
-        Questions, corrections, or a pitch? Write to{" "}
-        <a class="link" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
+        Corrections or questions? <a class="link" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
       </p>
     </section>
 
@@ -128,16 +64,3 @@ const first = issues.at(-1);
   </main>
   <SiteFooter />
 </BaseLayout>
-
-<style>
-  .about-figure {
-    margin-top: clamp(1.25rem, 3vw, 2rem);
-  }
-
-  .about-figure img {
-    width: 100%;
-    border-radius: var(--r-lg);
-    aspect-ratio: 16 / 7;
-    object-fit: cover;
-  }
-</style>

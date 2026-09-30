@@ -77,11 +77,11 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
     <article data-article>
       <div class="reading">
         <header class="issue-head">
-          <p class="issue-head__no">
-            <span class="t-number">Issue No. {issueNumber(issue)}</span>
-            <span class="dot-sep" aria-hidden="true"></span>
-            <time datetime={data.date.toISOString()}>{formatDate(data.date, "long")}</time>
-          </p>
+          <!-- <p class="issue-head__no"> -->
+            <!-- <span class="t-number">Issue No. {issueNumber(issue)}</span> -->
+            <!-- <span class="dot-sep" aria-hidden="true"></span> -->
+            <!-- Released on <time datetime={data.date.toISOString()}>{formatDate(data.date, "long")}</time> -->
+          <!-- </p> -->
 
           <h1 class="t-h1">{data.title}</h1>
           <p class="t-lead">{data.excerpt}</p>
@@ -121,7 +121,7 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
             />
           </div>
           <figcaption class="credit">
-            Photograph by{" "}
+            Image from{" "}
             <a class="link" href={data.cover.creditUrl} rel="noopener noreferrer">
               {data.cover.creditName}
             </a>
@@ -145,6 +145,12 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
             )
           }
 
+
+          <section class="reading section--tight">
+            <p class="t-body t-dim">
+              Corrections or questions? <a class="link" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
+            </p>
+          </section>
           <div class="issue-share">
             <ShareRow title={data.title} url={url} />
           </div>
@@ -289,6 +295,7 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
     gap: 0.75rem 1.25rem;
   }
 

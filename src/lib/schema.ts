@@ -45,10 +45,9 @@ export const issueSchema = (issue: Issue, imageUrl: string) => ({
   datePublished: issue.data.date.toISOString(),
   dateModified: (issue.data.updatedDate ?? issue.data.date).toISOString(),
   issueNumber: issue.data.issue,
-  author: {
-    "@type": "Person",
+  about: {
+    "@type": "Organization",
     name: issue.data.author.name,
-    jobTitle: issue.data.author.role,
   },
   publisher: publisher(),
   mainEntityOfPage: {

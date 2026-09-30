@@ -95,19 +95,31 @@
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --speed: 0.22s;
 
-  /* Topic containers: steel, rust, olive, brass, pine, and graphite. */
-  --topic-craft: #c3cdd5;
-  --topic-craft-ink: #263c4c;
-  --topic-design: #d5c4b8;
-  --topic-design-ink: #59351f;
-  --topic-growth: #c7ccb7;
-  --topic-growth-ink: #374021;
-  --topic-money: #d5c9a9;
-  --topic-money-ink: #514019;
-  --topic-tools: #bbccc3;
-  --topic-tools-ink: #244335;
-  --topic-interviews: #c9c9c8;
-  --topic-interviews-ink: #373a3c;
+  /* Genre backgrounds and contrasting text, with a distinct hue per genre. */
+  --topic-action-adventure: #f4ddcd;
+  --topic-action-adventure-ink: #643412;
+  --topic-rpg: #e0cdf4;
+  --topic-rpg-ink: #3b1264;
+  --topic-shooter: #cddaf4;
+  --topic-shooter-ink: #122d64;
+  --topic-horror: #f4cdcd;
+  --topic-horror-ink: #641212;
+  --topic-survival: #ddf4cd;
+  --topic-survival-ink: #346412;
+  --topic-strategy: #f4eacd;
+  --topic-strategy-ink: #644f12;
+  --topic-simulation: #cdf4f1;
+  --topic-simulation-ink: #12645d;
+  --topic-racing: #cdeaf4;
+  --topic-racing-ink: #124f64;
+  --topic-sports: #cdf4da;
+  --topic-sports-ink: #12642d;
+  --topic-fighting: #f4cddd;
+  --topic-fighting-ink: #641234;
+  --topic-platformer: #f1f4cd;
+  --topic-platformer-ink: #5d6412;
+  --topic-puzzle: #f4cdf4;
+  --topic-puzzle-ink: #641264;
 
   color-scheme: light;
 }
@@ -134,18 +146,30 @@
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
   --shadow-2: 0 2px 6px rgb(0 0 0 / 0.45), 0 12px 32px rgb(0 0 0 / 0.4);
 
-  --topic-craft: #253440;
-  --topic-craft-ink: #a4b8c7;
-  --topic-design: #3b2c23;
-  --topic-design-ink: #ceaa8c;
-  --topic-growth: #303525;
-  --topic-growth-ink: #b5bd91;
-  --topic-money: #3b3321;
-  --topic-money-ink: #c9b575;
-  --topic-tools: #23382e;
-  --topic-tools-ink: #98b9a5;
-  --topic-interviews: #303234;
-  --topic-interviews-ink: #b8bab9;
+  --topic-action-adventure: #402b1c;
+  --topic-action-adventure-ink: #f2c6a6;
+  --topic-rpg: #2e1c40;
+  --topic-rpg-ink: #cca6f2;
+  --topic-shooter: #1c2840;
+  --topic-shooter-ink: #a6bff2;
+  --topic-horror: #401c1c;
+  --topic-horror-ink: #f2a6a6;
+  --topic-survival: #2b401c;
+  --topic-survival-ink: #c6f2a6;
+  --topic-strategy: #40371c;
+  --topic-strategy-ink: #f2dfa6;
+  --topic-simulation: #1c403d;
+  --topic-simulation-ink: #a6f2ec;
+  --topic-racing: #1c3740;
+  --topic-racing-ink: #a6dff2;
+  --topic-sports: #1c4028;
+  --topic-sports-ink: #a6f2bf;
+  --topic-fighting: #401c2b;
+  --topic-fighting-ink: #f2a6c6;
+  --topic-platformer: #3d401c;
+  --topic-platformer-ink: #ecf2a6;
+  --topic-puzzle: #401c40;
+  --topic-puzzle-ink: #f2a6f2;
 
   color-scheme: dark;
 }
@@ -528,35 +552,65 @@ a.chip--current:not([data-topic]):hover {
   font-variant-numeric: tabular-nums;
 }
 
-/* Topic chips carry their own step on the accent ramp. */
-.chip[data-topic="updates"] {
-  background: var(--topic-craft);
-  color: var(--topic-craft-ink);
+/* Each genre uses the same palette across cards, archives, and search. */
+.chip[data-topic="action-adventure"] {
+  background: var(--topic-action-adventure);
+  color: var(--topic-action-adventure-ink);
 }
 
-.chip[data-topic="redemption"] {
-  background: var(--topic-design);
-  color: var(--topic-design-ink);
+.chip[data-topic="rpg"] {
+  background: var(--topic-rpg);
+  color: var(--topic-rpg-ink);
 }
 
-.chip[data-topic="game-launch"] {
-  background: var(--topic-growth);
-  color: var(--topic-growth-ink);
+.chip[data-topic="shooter"] {
+  background: var(--topic-shooter);
+  color: var(--topic-shooter-ink);
 }
 
-.chip[data-topic="censorship"] {
-  background: var(--topic-money);
-  color: var(--topic-money-ink);
+.chip[data-topic="horror"] {
+  background: var(--topic-horror);
+  color: var(--topic-horror-ink);
 }
 
-.chip[data-topic="industry"] {
-  background: var(--topic-tools);
-  color: var(--topic-tools-ink);
+.chip[data-topic="survival"] {
+  background: var(--topic-survival);
+  color: var(--topic-survival-ink);
 }
 
-.chip[data-topic="interviews"] {
-  background: var(--topic-interviews);
-  color: var(--topic-interviews-ink);
+.chip[data-topic="strategy"] {
+  background: var(--topic-strategy);
+  color: var(--topic-strategy-ink);
+}
+
+.chip[data-topic="simulation"] {
+  background: var(--topic-simulation);
+  color: var(--topic-simulation-ink);
+}
+
+.chip[data-topic="racing"] {
+  background: var(--topic-racing);
+  color: var(--topic-racing-ink);
+}
+
+.chip[data-topic="sports"] {
+  background: var(--topic-sports);
+  color: var(--topic-sports-ink);
+}
+
+.chip[data-topic="fighting"] {
+  background: var(--topic-fighting);
+  color: var(--topic-fighting-ink);
+}
+
+.chip[data-topic="platformer"] {
+  background: var(--topic-platformer);
+  color: var(--topic-platformer-ink);
+}
+
+.chip[data-topic="puzzle"] {
+  background: var(--topic-puzzle);
+  color: var(--topic-puzzle-ink);
 }
 
 /* A topic chip on its own page keeps its colour and takes an accent ring;

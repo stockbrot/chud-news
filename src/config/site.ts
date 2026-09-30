@@ -77,11 +77,10 @@ export const topicNavigation = topics.map((topic) => ({
 /** The bar. Anything longer belongs in the footer. */
 export const primaryNavigation = [
   { label: "All Posts", href: "/archive/" },
-  { label: "Categories", href: "/topics/" },
+  { label: "Genres", href: "/topics/" },
   { label: "Developers", href: "/devs/" },
-  { label: "About", href: "/about/" },
-  { label: "Styleguide", href: "/styleguide/" },
-  { label: "Score", href: "/scoring/" },
+  { label: "Scoring System", href: "/scoring/" },
+  { label: "About us", href: "/about/" },
 ];
 
 export const footerNavigation = [
@@ -89,14 +88,14 @@ export const footerNavigation = [
     title: "Read",
     links: [
       { label: "All posts", href: "/archive/" },
-      { label: "Categories", href: "/topics/" },
+      { label: "Genres", href: "/topics/" },
       { label: "Developers", href: "/devs/" },
       { label: "Scoring guide", href: "/scoring/" },
       { label: "Search", href: "/search/" },
     ],
   },
   {
-    title: "Categories",
+    title: "Genres",
     links: topicNavigation,
   },
   {

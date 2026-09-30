@@ -16,18 +16,18 @@ const rows = topics
   .filter((row) => row.issues.length > 0);
 ---
 
-<BaseLayout title="Topics" description={`What ${siteConfig.name} writes about, and how often.`}>
+<BaseLayout title="Genres" description={`Browse ${siteConfig.name} reviews by game genre.`}>
   <SiteHeader />
   <main id="content">
     <div class="container">
       <PageIntro
-        title="Topics"
-        description={`Six things ${siteConfig.name} keeps coming back to, and everything filed under each.`}
-        note={`${rows.length} topics · ${issues.length} issues`}
+        title="Genres"
+        description={`Find your kind of game. Read what we thought.`}
+        note={`${rows.length} genres · ${issues.length} issues`}
       />
     </div>
 
-    <section class="container section--tight" aria-label="Topics">
+    <section class="container section--tight" aria-label="Genres">
       <div class="topic-list">
         {
           rows.map(({ topic, issues: list }) => (

@@ -47,7 +47,7 @@ const nextUrl = withTrailingSlash(page.url.next);
 
 <BaseLayout
 title={title}
-description={`Issues written by ${writer.name}, ${writer.role}, for ${siteConfig.name}.`}
+description={`News, reviews, and score history for ${writer.name} on ${siteConfig.name}.`}
 image={latest?.data.cover.src}
 imageAlt={latest?.data.cover.alt}
 prevUrl={prevUrl}
@@ -84,7 +84,7 @@ nextUrl={nextUrl}
   </header>
 </div>
 
-<section class="container section--tight" aria-label={`Issues by ${writer.name}`}>
+<section class="container section--tight" aria-label={`Posts about ${writer.name}`}>
   <IssueIndex issues={page.data} headingLevel="h2" />
   <Pagination
   prevUrl={prevUrl}

@@ -19,11 +19,11 @@ const writers = allWriters(issues);
       <PageIntro
         title="Companies and Developers"
         description={`Every company and developer team featured on ${siteConfig.name}, each with their own archive.`}
-        note={`${writers.length} ${writers.length === 1 ? "writer" : "writers"}`}
+        note={`${writers.length} ${writers.length === 1 ? "profile" : "profiles"}`}
       />
     </div>
 
-    <section class="container section--tight" aria-label="Writers">
+    <section class="container section--tight" aria-label="Companies and developers">
       <div class="writer-grid">
         {writers.map((writer) => <WriterCard writer={writer} showBio />)}
       </div>

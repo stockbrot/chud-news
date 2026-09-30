@@ -78,7 +78,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
       id="site-search"
       name="q"
       type="search"
-      placeholder="Search posts, topics, companies…"
+      placeholder="Search posts, genres, companies…"
       autocomplete="off"
       enterkeyhint="search"
       data-search-input
@@ -135,7 +135,7 @@ const isCurrent = (href: string) => path === href || (href !== "/" && path.start
     const query = input.value.trim();
     if (!query) {
       const items = await runtime.load();
-      status.textContent = `Search the full text of ${items.length} posts, plus titles, topics, numbers, and companies.`;
+      status.textContent = `Search the full text of ${items.length} posts, plus titles, genres, numbers, and companies.`;
       results.innerHTML = "";
       return;
     }

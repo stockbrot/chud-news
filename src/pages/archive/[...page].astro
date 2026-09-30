@@ -21,14 +21,14 @@ interface Props {
 }
 
 const { page } = Astro.props;
-const title = page.currentPage === 1 ? "Every issue" : `Every issue - Page ${page.currentPage}`;
+const title = page.currentPage === 1 ? "Every post" : `Every post - Page ${page.currentPage}`;
 const prevUrl = withTrailingSlash(page.url.prev);
 const nextUrl = withTrailingSlash(page.url.next);
 ---
 
 <BaseLayout
   title={title}
-  description={`Every issue of ${siteConfig.name}, newest first.`}
+  description={`Every post of ${siteConfig.name}, newest first.`}
   prevUrl={prevUrl}
   nextUrl={nextUrl}
 >
@@ -36,9 +36,9 @@ const nextUrl = withTrailingSlash(page.url.next);
   <main id="content">
     <div class="container">
       <PageIntro
-        title="Every issue"
+        title="Every post"
         description={`Everything ${siteConfig.name} has sent, numbered and newest first.`}
-        note={`${page.total} ${page.total === 1 ? "issue" : "issues"}`}
+        note={`${page.total} ${page.total === 1 ? "post" : "posts"}`}
       >
         <div class="chip-row">
           {topics.map((topic) => <TopicChip topic={topic} />)}
@@ -46,7 +46,7 @@ const nextUrl = withTrailingSlash(page.url.next);
       </PageIntro>
     </div>
 
-    <section class="container section--tight" aria-label="Issue archive">
+    <section class="container section--tight" aria-label="Post archive">
       <IssueIndex issues={page.data} groupByYear headingLevel="h2" />
       <Pagination
         prevUrl={prevUrl}

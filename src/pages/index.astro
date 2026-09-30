@@ -127,7 +127,7 @@ const topicCounts = topics
           <SectionHead
             title="Back issues"
             id="ledger-title"
-            note="Every issue, numbered, newest first."
+            note="Every post, numbered, newest first."
             href="/archive/"
             linkLabel="Full archive"
           />
@@ -137,7 +137,7 @@ const topicCounts = topics
     }
 
     <section class="container section" aria-labelledby="topics-title">
-      <SectionHead title="Read by topic" id="topics-title" href="/topics/" />
+      <SectionHead title="Browse by genre" id="topics-title" href="/topics/" />
       <div class="topic-grid">
         {
           topicCounts.map(({ topic, count }) => (

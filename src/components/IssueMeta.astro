@@ -36,7 +36,7 @@ const Name = linked ? "a" : "span";
     )
   }
   {showWriter && <span class="dot-sep" aria-hidden="true" />}
-  <time datetime={date.toISOString()}>{formatDate(date)}</time>
-  {showReadTime && <span class="dot-sep" aria-hidden="true" />}
-  {showReadTime && <span>{readMinutes(issue)} min read</span>}
+  Released on <time datetime={date.toISOString()}>{formatDate(date)}</time>
+  <!-- {showReadTime && <span class="dot-sep" aria-hidden="true" />} -->
+  <!-- {showReadTime && <span>{readMinutes(issue)} min read</span>} -->
 </p>
