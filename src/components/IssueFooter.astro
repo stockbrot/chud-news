@@ -1,0 +1,140 @@
+---
+import { Image } from "astro:assets";
+import IssueScore from "@/components/IssueScore.astro";
+import ShareRow from "@/components/ShareRow.astro";
+import Avatar from "@/components/ui/Avatar.astro";
+import Icon from "@/components/ui/Icon.astro";
+import { writerBio, writerRole } from "@/config/writers";
+import { formatDate, issueHref, writerSlug, type Issue } from "@/lib/issues";
+
+interface Props {
+  issue: Issue;
+  older?: Issue;
+  newer?: Issue;
+  url: string;
+}
+
+const { issue, older, newer, url } = Astro.props;
+const { data } = issue;
+const bio = writerBio(data.author.name);
+const adjacent = [
+  { issue: older, direction: "prev", label: "Previous", icon: "arrow-left" },
+  { issue: newer, direction: "next", label: "Next", icon: "arrow-right" },
+] as const;
+---
+
+<footer class="issue-footer">
+  <div class="issue-footer__summary">
+    <p class="issue-footer__score">
+      <span>Score:</span>
+      <IssueScore score={data.score} compact />
+    </p>
+    {
+      data.updatedDate && (
+        <p class="issue-footer__updated">
+          Updated <time datetime={data.updatedDate.toISOString()}>
+            {formatDate(data.updatedDate, "long")}
+          </time>
+        </p>
+      )
+    }
+    <div class="issue-footer__share">
+      <ShareRow title={data.title} url={url} />
+    </div>
+  </div>
+
+  <div class="writer-note">
+    <Avatar name={data.author.name} size="lg" />
+    <div class="stack" style="gap:0.3rem">
+      <p class="t-h4">
+        <a class="link" href={`/devs/${writerSlug(data.author.name)}/`}>
+          {data.author.name}
+        </a>
+      </p>
+      <p class="t-meta">{writerRole(data.author.name)}</p>
+      {bio && <p class="t-small t-dim" style="margin-top:0.4rem">{bio}</p>}
+    </div>
+  </div>
+
+  {
+    (older || newer) && (
+      <nav class="issue-nav" aria-label="Issue navigation">
+        {adjacent.map(({ issue: neighbor, direction, label, icon }) => neighbor && (
+          <a
+            class:list={["issue-nav__link", direction === "next" && "issue-nav__link--next"]}
+            href={issueHref(neighbor)}
+            rel={direction}
+          >
+            <Image
+              class="issue-nav__cover"
+              src={neighbor.data.cover.src}
+              alt=""
+              width={160}
+              height={120}
+              sizes="80px"
+              loading="lazy"
+            />
+            <span class="issue-nav__copy">
+              <span class="issue-nav__label">
+                {direction === "prev" && <Icon name={icon} size={14} />}
+                {label}
+                {direction === "next" && <Icon name={icon} size={14} />}
+              </span>
+              <span class="issue-nav__title">{neighbor.data.title}</span>
+            </span>
+          </a>
+        ))}
+      </nav>
+    )
+  }
+</footer>
+
+<style>
+  .issue-footer {
+    display: grid;
+    gap: 1.75rem;
+    margin-top: 2rem;
+  }
+
+  .issue-footer__summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    border-block: 1px solid var(--line);
+    padding-block: 1rem;
+    font-size: 0.8125rem;
+  }
+
+  .issue-footer__score {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 650;
+  }
+
+  .issue-footer__updated {
+    color: var(--ink-faint);
+  }
+
+  .issue-footer__share {
+    margin-inline-start: auto;
+  }
+
+  @media (max-width: 32rem) {
+    .issue-footer__summary {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.5rem 1rem;
+    }
+
+    .issue-footer__share {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .issue-footer__updated {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

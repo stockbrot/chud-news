@@ -4,37 +4,42 @@ import SiteHeader from "@/components/SiteHeader.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import PageIntro from "@/components/PageIntro.astro";
 import IssueScore from "@/components/IssueScore.astro";
+import Emote from "@/components/Emote.astro";
 import { siteConfig } from "@/config/site";
 
-
 const launchScores = [
-  [50, "More than promised", "Delivers, plays brilliantly, and gives us more than we expected."],
-  [25, "Did their fucking job", "A solid game that delivers what it sold."],
-  [-25, "Rough edges", "Technical trouble, missing features, or annoying design dragging it down."],
-  [-50, "Should've been better", "Serious flaws in delivery, gameplay, writing, or value."],
-  [-100, "The sales pitch fell apart", "Major broken promises, widespread failures, or a deeply disappointing game."],
-  [-150, "What the fuck did we pay for?", "Broken, badly misrepresented, or just miserable to play. Explain which."],
+  [50, "+26 to +50 · More than promised", "An excellent game that delivers what it sold and meaningfully exceeds expectations in gameplay, writing, craft, or value."],
+  [25, "+20 to +25 · Did their fucking job", "A well-delivered, enjoyable game that meets expectations. It works, its core gameplay holds up, and you got what you paid for."],
+  [10, "+1 to +19 · Worth playing, with reservations", "A successful delivery with less convincing strengths or some minor friction. Its flaws don't undermine the main experience."],
+  [0, "0 · Neither a win nor a failure", "An assessed, mixed experience with no strong case for a reward or a launch penalty. Zero doesn't mean we haven't played it."],
+  [-5, "−1 to −10 · Slightly disappointing", "An otherwise mixed game whose minor problems leave it below expectations. This is the final verdict, after any minor adjustment; it isn't the automatic score for having an awkward menu."],
+  [-20, "−11 to −24 · A failed launch", "A broadly buggy mess, repeated crashes with limited lost progress, poor performance, or writing and gameplay that seriously let the game down. Around −20 fits a game whose vision is there but whose delivery isn't."],
+  [-40, "−25 to −50 · Game-breaking failures", "Deleted or corrupted saves, blocked main-story progress, or instability that makes normal play unreliable. Near −25 for a limited failure with an effective workaround; toward −50 for repeated save loss or widespread inability to play."],
+  [-100, "Below −50 · An exceptional failure", "Reserve heavier penalties for an unusually severe combination of core failures or major, documented misrepresentation. Explain why −25 to −50 doesn't cover it. The usual lower limit is −150."],
 ] as const;
 ---
 
-<BaseLayout title="Scoring guide" description="Promises, gameplay, writing, and value. Our scores include our opinions. Here's how the points work.">
+<BaseLayout title="Scoring guide" description="What our game scores mean: launch delivery, the biggest problem, a short patch window, and why a failed launch stays on the record.">
   <SiteHeader />
   <main id="content">
     <div class="reading">
       <PageIntro
         title="Deliver. And make it worth playing."
-        description="A game can run perfectly and still be shit. We judge what shipped, how it plays, and whether it was worth your money."
-        note="Scoring guide · Version 2.2 · September 2026"
+        description="You paid for a game, not the promise of a better one someday. Here's what our scores tell you about what actually shipped."
+        note="Scoring guide · Version 2.5 · October 2026"
       />
     </div>
     <div class="reading section--tight prose scoring-guide">
-      <h2 id="principles">The basics</h2>
-      <p>Developers start at <strong>1,000</strong>. Add each game's running score. No resets.</p>
-      <p><strong>These are our judgments, not scientific measurements.</strong> Boring combat, weak writing, shit value, or a game that plays itself can lose points even without a single crash. You can disagree. That's how opinions work.</p>
-      <p>Heavy-handed politics or social preaching can lose points when we think it hijacks the story or turns characters into mouthpieces. Show the actual scene and explain the problem. “We hated this” is an opinion; “they lied about this” needs receipts.</p>
+      <h2 id="principles">What the score means for you</h2>
+      <p>Each developer starts at <strong>1,000 points</strong>. Each game's score changes that total. Positive points mean a good delivery; negative points mean the launch let players down. The history stays visible.</p>
+      <p>There are two numbers to keep apart: the <strong>original launch verdict</strong> records the release we judged, and the <strong>current contribution</strong> is what that game adds to or subtracts from the developer's total today. They start out the same. One eligible repair can later reduce a loss, but the original verdict stays on the record.</p>
+      <p><strong>These are our judgments, not lab measurements.</strong> A game can run perfectly and still have boring combat, weak writing, or shit value. We explain what worked, what didn't, and why it mattered. You can disagree with the opinion and still follow the reasoning.</p>
+      <p>That includes writing we think turns characters into mouthpieces or lets preaching hijack the story. The review should show you the scene and explain the criticism. An opinion is an opinion; a claim that a developer lied needs evidence.</p>
 
-      <h2 id="launch">One launch. One score.</h2>
-      <p><strong>The numbers are guideposts.</strong> +23 or +12 is fine. The usual launch range is <strong>−150 to +50</strong>. Anything outside it needs a clearly labelled exception and reasons. No pretending personal taste is a benchmark.</p>
+      <h2 id="launch">One launch. One verdict.</h2>
+      <p><strong>A game earns its positive score by delivering.</strong> Around +20 to +25 means it met expectations and was worth playing. Exceeding those expectations can earn up to +50. <Emote name="Clap" /></p>
+      <p>Severe bugs, bad core gameplay, or writing that ruins the experience mean that delivery failed. We don't hand out +25 for the game's potential and then subtract 45 for the mess. It gets a negative launch verdict in the first place.</p>
+      <p><strong>The ranges below describe the original launch verdict.</strong> For a successful or mixed release, we first judge its quality, then make at most one small adjustment for its biggest minor annoyance. A failed release gets one overall negative verdict instead.</p>
       <div class="rubric">
         {launchScores.map(([score, title, detail]) => (
           <article class="rubric-row">
@@ -43,34 +48,41 @@ const launchScores = [
           </article>
         ))}
       </div>
+      <p>The numbers are guideposts, not fixed prices for bugs. +23 or −18 is fine when the explanation fits. The usual launch range is <strong>−150 to +50</strong>; anything outside it needs a clearly labelled exception.</p>
 
-      <h2 id="recovery">Fix your shit. Recover half.</h2>
-      <p>Working fixes, delivered promises, and changes that address our criticisms can earn back <strong>at most half the launch loss, combined</strong>. Show what improved. Round the cap down to a whole point: −25 allows +12 back.</p>
-      <p>Apologies and roadmaps earn <strong>zero</strong>. “It's coming later” can suck it. Shipping it late doesn't make the launch good.</p>
+      <h2 id="minor-adjustments">Small annoyances: an adjustment, not the verdict</h2>
+      <p>Awkward UI tabs, extra menu clicks, visual glitches, and non-game-breaking bugs can lower an otherwise successful or mixed game's score by <strong>1 to 10 points</strong>. Use 1 to 3 for rare friction, 4 to 6 for recurring annoyances, and 7 to 10 when they regularly get in the way. Only the biggest minor problem sets this adjustment.</p>
+      <p>A good game judged at <strong>+25</strong> with a <strong>−5</strong> UI adjustment has an original launch verdict of <strong>+20</strong>. An otherwise mixed game judged at <strong>0</strong> with the same adjustment finishes at <strong>−5</strong>. The adjustment and the final verdict are different numbers.</p>
+      <p>Game-breaking bugs and serious failures in writing or gameplay don't belong in this calculation. They mean a failed launch, with no positive award to offset the failure.</p>
 
-      <h2 id="rewards">Extra work earns extra credit.</h2>
-      <p><strong>+25</strong> for substantial free additions. <strong>+50</strong> for a major free expansion. Beyond the original promises, released and working. One award per update; no double-counting.</p>
-      <p>Update awards are flexible too, up to +50 each. Recovery still stops at half the launch loss. Preferences about length or difficulty alone aren't broken promises.</p>
-      <p>Paid DLC earns no bonus. Extra work can take the total above its starting point. The launch penalty stays in the history.</p>
+      <h2 id="deductions">The biggest problem takes priority</h2>
+      <p><strong>We judge the launch by its most serious failure, rather than adding a penalty for every complaint.</strong> If a game has confusing UI tabs and a glitch that deletes saves, the lost saves determine the score. The UI can still be mentioned in the review, but it doesn't add another deduction. <Emote name="PepeHands" /></p>
+      <p>For example, recurring save deletion might mean <strong>−40 overall</strong>. An awkward inventory doesn't turn that into −45. Equally, a buggy but playable launch might land at <strong>−20 overall</strong>, even if its world and intended gameplay are appealing.</p>
+      <p>How far down a range we go depends on the damage: how much play or progress you lose, how often it happens, which platforms are affected, and whether a practical workaround exists. One lost save can matter more than dozens of harmless visual glitches. Other major failures can explain a harsher overall verdict, but we don't stack a shopping list of deductions.</p>
 
-      <h2 id="examples">The maths</h2>
-      <p><strong>−100</strong> launch → <strong>+50</strong> recovery → <strong>+50</strong> free expansion = <strong>0</strong> from this game. Back to even by doing more than they owed you.</p>
+      <h2 id="grace-window">A short patch window. Not a blank cheque.</h2>
+      <p>We assess the release and its <strong>first 14 days</strong>, then settle the original launch verdict. Minor annoyances verified as fixed by day 14 receive no adjustment. Minor problems still present count; promises of a future patch don't.</p>
+      <p><strong>Serious failures at release still determine a negative launch verdict.</strong> Save deletion, widespread crashes, and inability to play should have been caught before release. Fixing them during the window doesn't erase them or earn a positive delivery award. If that fix qualifies as the one substantial free repair described below, we record its credit separately.</p>
+      <p>For example: a game ships with save deletion, judged at <strong>−40</strong>. A verified, substantial free repair on day 10 could earn up to <strong>+20</strong> in repair credit. At the end of the window, its <strong>original launch verdict is still −40</strong> and its <strong>current contribution is −20</strong>. The failure remains; prompt repair softens its cost once.</p>
+      <p>The review names the platform, version, and dates assessed. A fix on PC doesn't prove the console version is fixed. Clearly disclosed early-access limitations and fan expectations aren't broken promises.</p>
 
-      <h2 id="updates">Bring receipts. Keep it short.</h2>
-      <ul>
-        <li>Actual public promises. Not fan theories. Clearly disclosed early-access limitations aren't broken promises.</li>
-        <li>One issue per game: promise, result, score, dated updates. Link evidence and name the platform/version. Old games get the same rules.</li>
-        <li>Separate facts from opinions. Unverified claims don't cost points. Factual mistakes get labelled corrections; changed opinions get explained updates.</li>
-      </ul>
-      <p class="t-small t-dim">Version 2.2 explicitly includes gameplay, writing, value, and editorial opinion. Existing scores aren't automatically recalculated.</p>
+      <h2 id="recovery">A repair can soften the loss. It can't erase it.</h2>
+      <p><strong>Routine patches earn no points.</strong> Fixing minor bugs, releasing roadmaps, and apologising are not extra achievements. A failed launch stays a failed launch.</p>
+      <p>There is one exception: <strong>one substantial, free repair</strong> that actually brings a failed game up to the playable, reasonably stable standard you should have received. Whether it arrives inside or after the 14-day window, it can recover <strong>at most half the original launch loss</strong>. Only the current contribution changes; the original launch verdict remains negative.</p>
+      <p><strong>The longer you waited from release, the less comes back.</strong> A convincing repair within the window or shortly afterward can justify up to half. A repair months later deserves less; after a year or more, little or nothing. Those are judgment calls, not automatic payouts. The review explains the time taken, what was fixed, and why that much credit is warranted.</p>
+      <p>For example, an <strong>original launch verdict of −20</strong> plus <strong>+5 repair credit</strong> gives a <strong>current contribution of −15</strong>. A developer with no other games would then have <strong>985 points</strong>: 1,000 − 15. The original −20 stays in the history. Half of a −25 loss is capped at +12, rounded down.</p>
+      <p>Recovery needs evidence of how the repaired game plays on the affected platforms. Patch notes alone don't prove it works. Early repair credit uses the same one-time allowance as later repair credit; it never gets awarded twice. Minor fixes earn no repair credit, and buying DLC or new hardware isn't a free repair for the players who were let down.</p>
+
+      <h2 id="rewards">We're rating the launch</h2>
+      <p>New content, free expansions, and paid DLC earn no bonuses toward the game's current contribution. We can cover them in the review's history, but a better game years later doesn't rewrite what you bought at release.</p>
+
+      <h2 id="updates">You should be able to follow the verdict</h2>
+      <p>Each game has one issue with its launch verdict, evidence, and dated updates. Factual claims need sources; opinions need examples. Unverified claims don't cost points. Corrections are labelled, and any change to the score gets an explanation.</p>
+      <p class="t-small t-dim">Version 2.5 separates minor adjustments, original launch verdicts, and current contributions, and clarifies repair credit within the 14-day window. Existing scores aren't automatically recalculated.</p>
     </div>
-
     <section class="reading section--tight">
-      <p class="t-body t-dim">
-        Corrections or questions? <a class="link" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.
-      </p>
+      <p class="t-body t-dim">Corrections or questions? <a class="link" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>.</p>
     </section>
-
   </main>
   <SiteFooter />
 </BaseLayout>

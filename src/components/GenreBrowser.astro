@@ -1,0 +1,97 @@
+---
+import IssueCard from "@/components/IssueCard.astro";
+import { platforms, platformSlug } from "@/config/platforms";
+import { topics, topicSlug, type Topic } from "@/config/topics";
+import type { Issue } from "@/lib/issues";
+
+interface Props { issues: Issue[]; initialTopic?: Topic }
+const { issues, initialTopic } = Astro.props;
+const initialCount = issues.filter((issue) => !initialTopic || issue.data.topic.includes(initialTopic)).length;
+---
+
+<genre-browser data-initial-genre={initialTopic ? topicSlug(initialTopic) : ""}>
+  <div class="filters">
+    <div class="filter-group" role="group" aria-label="Platform">
+      <p class="t-meta">Platform</p>
+      <div class="filter-chips">
+        <button type="button" class="chip chip--current" data-platform="" aria-pressed="true">All platforms</button>
+        {platforms.map((platform) => <button type="button" class="chip" data-platform={platformSlug(platform)} aria-pressed="false">{platform}</button>)}
+      </div>
+    </div>
+    <hr />
+    <div class="filter-group" role="group" aria-label="Genre">
+      <p class="t-meta">Genre</p>
+      <div class="filter-chips">
+        <button type="button" class:list={["chip", !initialTopic && "chip--current"]} data-genre="" aria-pressed={!initialTopic}>All genres</button>
+        {topics.map((topic) => <button type="button" class:list={["chip", topic === initialTopic && "chip--current"]} data-topic={topicSlug(topic)} data-genre={topicSlug(topic)} aria-pressed={topic === initialTopic}>{topic}</button>)}
+      </div>
+    </div>
+  </div>
+  <p class="result-count t-meta" aria-live="polite" aria-atomic="true">{initialCount} {initialCount === 1 ? "issue" : "issues"}</p>
+  <div class="cards cards--3">
+    {issues.map((issue) => <div hidden={!!initialTopic && !issue.data.topic.includes(initialTopic)} data-issue data-platforms={issue.data.platforms.map(platformSlug).join(" ")} data-genres={issue.data.topic.map(topicSlug).join(" ")}>
+      <IssueCard issue={issue} headingLevel="h2" />
+    </div>)}
+  </div>
+  <p class="empty t-lead" hidden>No issues match this platform and genre. Try another filter.</p>
+</genre-browser>
+
+<script>
+  class GenreBrowser extends HTMLElement {
+    connectedCallback() {
+      this.controller.abort();
+      this.controller = new AbortController();
+      const buttons = Array.from(this.querySelectorAll<HTMLButtonElement>("button[data-platform], button[data-genre]"));
+      const rows = Array.from(this.querySelectorAll<HTMLElement>("[data-issue]"));
+      const update = () => {
+        const params = new URLSearchParams(location.search);
+        const platform = params.get("platform") ?? "";
+        const genre = params.get("genre") ?? this.dataset.initialGenre ?? "";
+        const selectedPlatform = buttons.some((button) => button.dataset.platform === platform) ? platform : "";
+        const selectedGenre = buttons.some((button) => button.dataset.genre === genre) ? genre : "";
+        buttons.forEach((button) => {
+          const selected = button.hasAttribute("data-platform") ? button.dataset.platform === selectedPlatform : button.dataset.genre === selectedGenre;
+          button.setAttribute("aria-pressed", String(selected));
+          button.classList.toggle("chip--current", selected);
+        });
+        let count = 0;
+        rows.forEach((row) => {
+          const matches = (!selectedPlatform || row.dataset.platforms?.split(" ").includes(selectedPlatform)) && (!selectedGenre || row.dataset.genres?.split(" ").includes(selectedGenre));
+          row.hidden = !matches;
+          if (matches) count++;
+        });
+        this.querySelector<HTMLElement>(".result-count")!.textContent = `${count} ${count === 1 ? "issue" : "issues"}`;
+        this.querySelector<HTMLElement>(".empty")!.hidden = count !== 0;
+      };
+      buttons.forEach((button) => button.addEventListener("click", () => {
+        const url = new URL(location.href);
+        const key = button.hasAttribute("data-platform") ? "platform" : "genre";
+        const value = button.dataset[key] ?? "";
+        // Explicit empty genre overrides a genre page's initial selection.
+        if (value || key === "genre") url.searchParams.set(key, value);
+        else url.searchParams.delete(key);
+        history.pushState(null, "", url);
+        update();
+      }, { signal: this.controller.signal }));
+      window.addEventListener("popstate", update, { signal: this.controller.signal });
+      // ClientRouter connects the incoming element before updating the URL.
+      // Read the final query again once navigation has completed.
+      document.addEventListener("astro:page-load", update, { signal: this.controller.signal });
+      update();
+    }
+    private controller = new AbortController();
+    disconnectedCallback() { this.controller.abort(); }
+  }
+  if (!customElements.get("genre-browser")) customElements.define("genre-browser", GenreBrowser);
+</script>
+
+<style>
+  genre-browser { display: block; }
+  .filters { border-top: 1px solid var(--line); padding-top: 1.5rem; }
+  .filter-group { display: grid; gap: 0.75rem; }
+  .filter-chips { justify-content: center; align-content: center; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 1.5rem 0; }
+  button { cursor: pointer; font-family: inherit; }
+  .result-count { margin: 1.5rem 0; }
+  [hidden] { display: none !important; }
+</style>

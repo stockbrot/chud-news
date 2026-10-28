@@ -1,89 +1,25 @@
 ---
 import { getCollection } from "astro:content";
+import GenreBrowser from "@/components/GenreBrowser.astro";
 import PageIntro from "@/components/PageIntro.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
-import TopicChip from "@/components/TopicChip.astro";
-import Icon from "@/components/ui/Icon.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { siteConfig } from "@/config/site";
-import { topicMeta } from "@/config/topics";
-import { byTopic, formatDate, publishedIssues, topicSlug, topics } from "@/lib/issues";
+import { publishedIssues } from "@/lib/issues";
 
 const issues = publishedIssues(await getCollection("issues"));
-const rows = topics
-  .map((topic) => ({ topic, issues: byTopic(issues, topic) }))
-  .filter((row) => row.issues.length > 0);
 ---
 
-<BaseLayout title="Genres" description={`Browse ${siteConfig.name} reviews by game genre.`}>
+<BaseLayout title="Genres" description={`Browse ${siteConfig.name} reviews by game genre and platform.`}>
   <SiteHeader />
   <main id="content">
     <div class="container">
-      <PageIntro
-        title="Genres"
-        description={`Find your kind of game. Read what we thought.`}
-        note={`${rows.length} genres · ${issues.length} issues`}
-      />
+      <PageIntro title="Genres" description="Find your kind of game. Filter by platform and genre." />
     </div>
-
-    <section class="container section--tight" aria-label="Genres">
-      <div class="topic-list">
-        {
-          rows.map(({ topic, issues: list }) => (
-            <a class="topic-row" href={`/topics/${topicSlug(topic)}/`}>
-              <div class="stack" style="gap:0.6rem">
-                <TopicChip topic={topic} linked={false} />
-                <p class="t-h3">{topicMeta[topic].summary}</p>
-                <p class="t-meta">
-                  {list.length} {list.length === 1 ? "issue" : "issues"} · Latest{" "}
-                  {formatDate(list[0].data.date)}
-                </p>
-              </div>
-              <Icon name="arrow-right" size={18} class="topic-row__arrow" />
-            </a>
-          ))
-        }
-      </div>
+    <section class="container section--tight" aria-label="Browse issues by platform and genre">
+      <GenreBrowser issues={issues} />
     </section>
   </main>
   <SiteFooter />
 </BaseLayout>
-
-<style>
-  .topic-list {
-    display: grid;
-  }
-
-  .topic-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    border-top: 1px solid var(--line);
-    padding: 1.75rem 0.75rem;
-    margin-inline: -0.75rem;
-    transition: background-color var(--speed) var(--ease);
-  }
-
-  .topic-row:last-child {
-    border-bottom: 1px solid var(--line);
-  }
-
-  .topic-row:hover {
-    background: var(--surface);
-  }
-
-  .topic-row:hover .t-h3 {
-    color: var(--accent);
-  }
-
-  .topic-row__arrow {
-    flex: none;
-    color: var(--ink-faint);
-  }
-
-  .topic-row:hover .topic-row__arrow {
-    color: var(--accent);
-  }
-</style>

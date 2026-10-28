@@ -2,11 +2,10 @@
 @source "../**/*.{astro,ts,md,mdx}";
 
 /* ==========================================================================
-   Mailer — design tokens
+   Chud News — design tokens
    --------------------------------------------------------------------------
-   One typeface, tinted neutral surfaces, generous radii, and a single blue
-   that only ever means "this is interactive". Topic chips use muted mineral
-   and earth tones, with contrasting ink in both colour modes.
+   Warm paper, charcoal ink, compact corners, and a forest-green accent.
+   Genre and score colours remain distinct in both colour modes.
    ========================================================================== */
 
 @font-face {
@@ -61,31 +60,31 @@
     sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, monospace;
 
-  --page: #ffffff;
-  --surface: #f5f7fa;
-  --surface-strong: #eceff4;
-  --surface-accent: #e8eefd;
-  --ink: #13161c;
-  --ink-soft: #4e5663;
-  --ink-faint: #626a76;
-  --line: #e0e4ea;
-  --line-strong: #8a8f97;
+  --page: #faf8f3;
+  --surface: #f0ede6;
+  --surface-strong: #e7e2d8;
+  --surface-accent: #e4ece1;
+  --ink: #24231f;
+  --ink-soft: #59574f;
+  --ink-faint: #706d63;
+  --line: #ded9ce;
+  --line-strong: #9b9589;
 
-  --accent: #2450e6;
-  --accent-hover: #1a3fc4;
+  --accent: #356247;
+  --accent-hover: #274c35;
   --accent-ink: #ffffff;
-  --accent-soft: #e8eefd;
-  --accent-soft-ink: #12328f;
+  --accent-soft: #e4ece1;
+  --accent-soft-ink: #294c35;
 
-  --focus: #2450e6;
+  --focus: #356247;
 
   --shadow-1: 0 1px 2px rgb(19 22 28 / 0.06), 0 1px 3px rgb(19 22 28 / 0.05);
   --shadow-2: 0 2px 6px rgb(19 22 28 / 0.07), 0 8px 24px rgb(19 22 28 / 0.07);
 
-  --r-xs: 0.5rem;
-  --r-sm: 0.75rem;
-  --r-md: 1rem;
-  --r-lg: 1.75rem;
+  --r-xs: 0.2rem;
+  --r-sm: 0.3rem;
+  --r-md: 0.4rem;
+  --r-lg: 0.6rem;
   --r-full: 999px;
 
   --w-page: 72rem;
@@ -96,8 +95,8 @@
   --speed: 0.22s;
 
   /* Genre backgrounds and contrasting text, with a distinct hue per genre. */
-  --topic-action-adventure: #f4ddcd;
-  --topic-action-adventure-ink: #643412;
+  --topic-action-adventure: #e2e8d3;
+  --topic-action-adventure-ink: #42512b;
   --topic-rpg: #e0cdf4;
   --topic-rpg-ink: #3b1264;
   --topic-shooter: #cddaf4;
@@ -125,29 +124,29 @@
 }
 
 :root[data-theme="dark"] {
-  --page: #101216;
-  --surface: #181b21;
-  --surface-strong: #22262e;
-  --surface-accent: #1b2440;
-  --ink: #edeff3;
-  --ink-soft: #aeb6c2;
-  --ink-faint: #868f9c;
-  --line: #2a2f38;
-  --line-strong: #606a7b;
+  --page: #191a18;
+  --surface: #22231f;
+  --surface-strong: #2c2d27;
+  --surface-accent: #263329;
+  --ink: #f1eee5;
+  --ink-soft: #bcb9ad;
+  --ink-faint: #a19e91;
+  --line: #383a32;
+  --line-strong: #75786a;
 
-  --accent: #9db4ff;
-  --accent-hover: #bdcbff;
-  --accent-ink: #0d1a3d;
-  --accent-soft: #1b2440;
-  --accent-soft-ink: #c3d1ff;
+  --accent: #a2c49a;
+  --accent-hover: #bfd8b7;
+  --accent-ink: #17271b;
+  --accent-soft: #263329;
+  --accent-soft-ink: #c3dbbc;
 
-  --focus: #9db4ff;
+  --focus: #a2c49a;
 
   --shadow-1: 0 1px 2px rgb(0 0 0 / 0.5);
   --shadow-2: 0 2px 6px rgb(0 0 0 / 0.45), 0 12px 32px rgb(0 0 0 / 0.4);
 
-  --topic-action-adventure: #402b1c;
-  --topic-action-adventure-ink: #f2c6a6;
+  --topic-action-adventure: #303823;
+  --topic-action-adventure-ink: #c9d7a7;
   --topic-rpg: #2e1c40;
   --topic-rpg-ink: #cca6f2;
   --topic-shooter: #1c2840;
@@ -409,7 +408,7 @@ a {
   justify-content: center;
   gap: 0.5rem;
   border: 1px solid transparent;
-  border-radius: var(--r-full);
+  border-radius: var(--r-sm);
   background: var(--accent);
   color: var(--accent-ink);
   padding: 0.625rem 1.35rem;
@@ -513,14 +512,16 @@ a {
    -------------------------------------------------------------------------- */
 
 .chip {
+  justify-content: center;
+  align-content: center;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   border: 1px solid transparent;
-  border-radius: var(--r-full);
+  border-radius: var(--r-xs);
   background: var(--surface-strong);
   color: var(--ink-soft);
-  padding: 0.3rem 0.75rem;
+  padding: 0.3rem 0.65rem;
   font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1.3;
@@ -902,6 +903,7 @@ a.chip[data-topic]:hover {
 /* The button takes its height from the field beside it rather than from its own
    padding, so the two can never disagree by a couple of pixels. */
 .signup__row .btn {
+  min-height: 2.75rem;
   padding-block: 0;
 }
 
@@ -914,7 +916,7 @@ a.chip[data-topic]:hover {
 .field__input {
   width: 100%;
   border: 1px solid var(--line-strong);
-  border-radius: var(--r-full);
+  border-radius: var(--r-sm);
   background: var(--page);
   padding: 0.7rem 1.1rem;
   font-size: 1rem;
@@ -1126,6 +1128,14 @@ a.chip[data-topic]:hover {
   align-items: center;
   gap: 0.4rem 0.75rem;
   grid-column: 2;
+  min-width: 0;
+}
+
+.index__topic {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
   min-width: 0;
 }
 
@@ -1382,14 +1392,6 @@ a.chip[data-topic]:hover {
   padding-block: clamp(2rem, 5vw, 3rem) 0;
 }
 
-.issue-foot {
-  display: grid;
-  gap: 2rem;
-  margin-top: clamp(2.5rem, 5vw, 3.5rem);
-  border-top: 1px solid var(--line);
-  padding-top: 2rem;
-}
-
 .writer-note {
   display: flex;
   align-items: flex-start;
@@ -1403,10 +1405,13 @@ a.chip[data-topic]:hover {
 
 .issue-nav__link {
   display: grid;
-  gap: 0.4rem;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--r-md);
-  padding: 1.15rem 1.35rem;
+  padding: 0.85rem;
   transition:
     border-color var(--speed) var(--ease),
     background-color var(--speed) var(--ease);
@@ -1453,8 +1458,33 @@ a.chip[data-topic]:hover {
   transform: translateX(-3px);
 }
 
+.issue-nav__cover {
+  width: 5rem;
+  height: 3.75rem;
+  object-fit: cover;
+  border-radius: var(--r-xs);
+  background: var(--surface-strong);
+}
+
+.issue-nav__copy {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
 .issue-nav__link--next {
+  grid-template-columns: minmax(0, 1fr) 5rem;
   text-align: right;
+}
+
+.issue-nav__link--next .issue-nav__cover {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.issue-nav__link--next .issue-nav__copy {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .issue-nav__link--next .issue-nav__label {
@@ -1468,6 +1498,10 @@ a.chip[data-topic]:hover {
 @media (min-width: 40rem) {
   .issue-nav {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .issue-nav__link--next {
+    grid-column: 2;
   }
 }
 
@@ -2416,4 +2450,106 @@ img.emote {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+/* Publication identity: quiet rules, strong headlines, and compact controls. */
+.site-header {
+  border-top: 3px solid var(--accent);
+  border-bottom-color: var(--line);
+}
+
+.wordmark {
+  font-weight: 850;
+  font-size: 1.2rem;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.site-nav {
+  margin-inline-start: 0.25rem;
+}
+
+.site-nav a {
+  border-radius: var(--r-xs);
+  padding-inline: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.masthead {
+  max-width: none;
+  gap: 0.9rem;
+  padding-block: clamp(2.25rem, 5vw, 4rem) 2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.masthead__eyebrow {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.masthead .t-display {
+  max-width: 22ch;
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+.masthead__aside {
+  display: grid;
+  gap: 1rem;
+  align-content: center;
+  width: 100%;
+}
+
+.masthead__facts {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.lead__body .t-h1 {
+  font-weight: 750;
+}
+
+.card {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 1.5rem;
+}
+
+.card__title {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 750;
+}
+
+.index__no,
+.index__score,
+.pagination__state {
+  font-family: var(--font-mono);
+}
+
+.panel {
+  border: 1px solid var(--line);
+}
+
+@media (min-width: 64rem) {
+  .masthead {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 1rem 3rem;
+  }
+
+  .masthead__eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .masthead__aside {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    border-left: 1px solid var(--line);
+    padding-left: 2rem;
+  }
 }

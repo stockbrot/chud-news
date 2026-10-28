@@ -44,7 +44,7 @@ const rows = issues.map((issue, index) => ({
               becomes `display: contents` there. */}
           <span class="index__facts">
             <span class="index__topic">
-              <TopicChip topic={issue.data.topic} linked={false} />
+              {issue.data.topic.map((topic) => <TopicChip topic={topic} linked={false} />)}
             </span>
             <IssueScore score={issue.data.score} />
             <IssueMeta issue={issue} showWriter={false} class="index__meta" />

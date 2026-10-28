@@ -29,7 +29,7 @@ export const siteConfig = {
   /** Printed under the masthead and in the footer. Keep it to one sentence. */
   bio: "Bringing the news to you without the corporate filter.",
   /** Shown beside the signup form. Set it to whatever your schedule actually is. */
-  cadence: "Every day",
+  cadence: "We post every day",
   /**
    * The byline that fronts the About page. `name` must match an `author.name`
    * used in issue frontmatter — the block links to that writer's archive.
@@ -59,7 +59,7 @@ export const siteConfig = {
       "One email every Thursday. No sequences, no upsells, unsubscribe in a click.",
     terms: "We store your address to send the newsletter, and nothing else.",
     /** Printed under the form as social proof. Leave empty to hide it. */
-    proof: "2,400 readers",
+    proof: "something here that'll show beneath signup.",
   },
   socials: [
     { label: "Bluesky", href: "https://bsky.app" },
@@ -76,7 +76,6 @@ export const topicNavigation = topics.map((topic) => ({
 
 /** The bar. Anything longer belongs in the footer. */
 export const primaryNavigation = [
-  { label: "All Posts", href: "/archive/" },
   { label: "Genres", href: "/topics/" },
   { label: "Developers", href: "/devs/" },
   { label: "Scoring System", href: "/scoring/" },
@@ -87,7 +86,6 @@ export const footerNavigation = [
   {
     title: "Read",
     links: [
-      { label: "All posts", href: "/archive/" },
       { label: "Genres", href: "/topics/" },
       { label: "Developers", href: "/devs/" },
       { label: "Scoring guide", href: "/scoring/" },
@@ -96,7 +94,10 @@ export const footerNavigation = [
   },
   {
     title: "Genres",
-    links: topicNavigation,
+    links: topics.map((topic) => ({
+      label: topic,
+      href: `/topics/?genre=${topicSlug(topic)}`,
+    })),
   },
   {
     title: "Chud News",

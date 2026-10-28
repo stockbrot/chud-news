@@ -1,4 +1,4 @@
-/** Choose the main genre for each game using its topic field. */
+/** Choose one or more genres for each game using its topic field. */
 export const topics = ["Action Adventure", "RPG", "Shooter", "Horror", "Survival", "Strategy", "Simulation", "Racing", "Sports", "Fighting", "Platformer", "Puzzle"] as const;
 
 export type Topic = (typeof topics)[number];

@@ -2,6 +2,7 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { topics } from "@/config/topics";
+import { platforms } from "@/config/platforms";
 
 const issues = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/issues" }),
@@ -12,8 +13,13 @@ const issues = defineCollection({
       title: z.string(),
       /** One or two sentences. Used on every listing, in the feed, and as the meta description. */
       excerpt: z.string(),
-      topic: z.enum(topics),
+      /** One genre or a list, e.g. topic: ["Horror", "Survival"]. */
+      topic: z.union([z.enum(topics), z.array(z.enum(topics)).min(1)])
+        .transform((value) => [...new Set(Array.isArray(value) ? value : [value])]),
       date: z.coerce.date(),
+      /** Platform families, kept separate from the topic/genre taxonomy. */
+      platforms: z.array(z.enum(platforms)).default([])
+        .transform((value) => [...new Set(value)]),
       updatedDate: z.coerce.date().optional(),
       author: z.object({
         name: z.string(),

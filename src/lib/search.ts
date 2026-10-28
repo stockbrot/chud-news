@@ -18,7 +18,7 @@ export interface SearchItem {
   /** Markdown/MDX source, used only for matching and never rendered as HTML. */
   body: string;
   href: string;
-  topic: string;
+  topic: string[];
   author: string;
   date: string;
   readTime: string;

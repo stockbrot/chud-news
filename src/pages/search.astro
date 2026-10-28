@@ -66,11 +66,10 @@ import { siteConfig } from "@/config/site";
           esc(item.title) +
           '</h2><p class="index__excerpt">' +
           esc(item.excerpt) +
-          '</p></div><span class="index__topic"><span class="chip" data-topic="' +
-          esc(item.topic.toLowerCase().replace(/\s+/g, "-")) +
-          '">' +
-          esc(item.topic) +
-          '</span></span><p class="meta index__meta"><span>' +
+          '</p></div><span class="index__topic">' +
+          item.topic.map((topic) => '<span class="chip" data-topic="' +
+            esc(topic.toLowerCase().replace(/\s+/g, "-")) + '">' + esc(topic) + '</span>').join('') +
+          '</span><p class="meta index__meta"><span>' +
           esc(item.date) +
           "</span></p></a>";
 

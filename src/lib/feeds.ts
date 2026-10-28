@@ -69,7 +69,7 @@ export const feedItems = async (issues: Issue[]): Promise<RSSFeedItem[]> =>
       link: issueHref(issue),
       pubDate: issue.data.date,
       description: issue.data.excerpt,
-      categories: [issue.data.topic],
+      categories: issue.data.topic,
       content: siteConfig.rss.fullContent ? await renderBody(issue) : undefined,
       enclosure: {
         url: absoluteUrl(issue.data.cover.src.src),

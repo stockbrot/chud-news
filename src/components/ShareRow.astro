@@ -15,16 +15,16 @@ const { title, url } = Astro.props;
 ---
 
 <div class="share">
-  <span class="t-meta">Share</span>
   <button
     type="button"
     class="btn btn--outline btn--sm"
+    aria-label="Share this post"
     data-share-open
     data-share-title={title}
     data-share-url={url}
   >
     <LocalIcon name="share" size={14} />
-    <span>Share this post</span>
+    <span>Share</span>
   </button>
 </div>
 

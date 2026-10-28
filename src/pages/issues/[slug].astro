@@ -8,25 +8,20 @@ import IssueComments from "@/components/IssueComments.astro";
 import IssueMeta from "@/components/IssueMeta.astro";
 import IssueScore from "@/components/IssueScore.astro";
 import SectionHead from "@/components/SectionHead.astro";
-import ShareRow from "@/components/ShareRow.astro";
+import IssueFooter from "@/components/IssueFooter.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SubscribePanel from "@/components/SubscribePanel.astro";
 import TopicChip from "@/components/TopicChip.astro";
-import Avatar from "@/components/ui/Avatar.astro";
-import Icon from "@/components/ui/Icon.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { siteConfig } from "@/config/site";
-import { writerBio, writerRole } from "@/config/writers";
 import {
   adjacentIssues,
   developerScore,
-  formatDate,
   issueHref,
   issueSlug,
   publishedIssues,
   relatedIssues,
-  writerSlug,
   type Issue,
 } from "@/lib/issues";
 import { issueComponents } from "@/lib/issue-components";
@@ -52,7 +47,6 @@ const totalScore = developerScore(issues, data.author.name);
 
 const { newer, older } = adjacentIssues(issues, issue);
 const related = relatedIssues(issues, issue);
-const bio = writerBio(data.author.name);
 const url = new URL(issueHref(issue), siteConfig.siteUrl).toString();
 const absoluteCover = new URL(data.cover.src.src, siteConfig.siteUrl).toString();
 const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema(issue)];
@@ -87,7 +81,7 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
 
           <div class="issue-head__row">
             <IssueMeta issue={issue} linked />
-            <TopicChip topic={data.topic} />
+            {data.topic.map((topic) => <TopicChip topic={topic} />)}
           </div>
           <dl class="issue-scores">
             <div>
@@ -133,66 +127,7 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
           </div>
           <ProseRuntime />
 
-          {
-            data.updatedDate && (
-              <p class="t-meta" style="margin-top:2rem">
-                Updated{" "}
-                <time datetime={data.updatedDate.toISOString()}>
-                  {formatDate(data.updatedDate, "long")}
-                </time>
-              </p>
-            )
-          }
-
-            
-          <div class="issue-share">
-            <ShareRow title={data.title} url={url} />
-          </div>
-
-          <footer class="issue-foot">
-            <div class="writer-note">
-              <Avatar name={data.author.name} size="lg" />
-              <div class="stack" style="gap:0.3rem">
-                <p class="t-h4">
-                  <a class="link" href={`/devs/${writerSlug(data.author.name)}/`}>
-                    {data.author.name}
-                  </a>
-                </p>
-                <p class="t-meta">{writerRole(data.author.name)}</p>
-                {bio && <p class="t-small t-dim" style="margin-top:0.4rem">{bio}</p>}
-              </div>
-            </div>
-
-            {
-              (newer || older) && (
-                <nav class="issue-nav" aria-label="Issue navigation">
-                  {older ? (
-                    <a class="issue-nav__link" href={issueHref(older)} rel="prev">
-                      <span class="issue-nav__label">
-                        <Icon name="arrow-left" size={14} />
-                        Previous
-                      </span>
-                      <span class="issue-nav__title">{older.data.title}</span>
-                    </a>
-                  ) : (
-                    <span />
-                  )}
-
-                  {newer ? (
-                    <a class="issue-nav__link issue-nav__link--next" href={issueHref(newer)} rel="next">
-                      <span class="issue-nav__label">
-                        Next
-                        <Icon name="arrow-right" size={14} />
-                      </span>
-                      <span class="issue-nav__title">{newer.data.title}</span>
-                    </a>
-                  ) : (
-                    <span />
-                  )}
-                </nav>
-              )
-            }
-          </footer>
+          <IssueFooter issue={issue} older={older} newer={newer} url={url} />
         </div>
       </div>
     </article>
@@ -206,7 +141,7 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
     {
       related.length > 0 && (
         <section class="container section--tight" aria-labelledby="related-title">
-          <SectionHead title="Keep reading" id="related-title" href="/archive/" linkLabel="All posts" />
+          <SectionHead title="Keep reading" id="related-title" href="/topics/" linkLabel="All posts" />
           <div class="cards cards--3">
             {related.map((item) => (
               <IssueCard issue={item} headingLevel="h3" showExcerpt={false} />
@@ -294,7 +229,4 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
     gap: 0.75rem 1.25rem;
   }
 
-  .issue-share {
-    margin-top: clamp(2rem, 4vw, 2.75rem);
-  }
 </style>

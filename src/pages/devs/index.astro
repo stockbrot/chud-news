@@ -6,10 +6,12 @@ import SiteHeader from "@/components/SiteHeader.astro";
 import WriterCard from "@/components/WriterCard.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { siteConfig } from "@/config/site";
-import { allWriters, publishedIssues } from "@/lib/issues";
+import { allWriters, developerScore, publishedIssues } from "@/lib/issues";
 
 const issues = publishedIssues(await getCollection("issues"));
-const writers = allWriters(issues);
+const writers = allWriters(issues)
+  .map((writer) => ({ ...writer, score: developerScore(writer.issues, writer.name) }))
+  .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
 ---
 
 <BaseLayout title="Developers" description={`Companies rated on ${siteConfig.name}`}>
@@ -24,10 +26,71 @@ const writers = allWriters(issues);
     </div>
 
     <section class="container section--tight" aria-label="Companies and developers">
-      <div class="writer-grid">
-        {writers.map((writer) => <WriterCard writer={writer} showBio />)}
-      </div>
+      <developer-sort>
+        <div class="sort-buttons" role="group" aria-label="Sort developers">
+          <button type="button" class="chip chip--current" data-sort="highest" aria-pressed="true">Highest to lowest</button>
+          <button type="button" class="chip" data-sort="lowest" aria-pressed="false">Lowest to highest</button>
+          <button type="button" class="chip" data-sort="issues" aria-pressed="false">Number of issues posted</button>
+        </div>
+        <div class="writer-grid">
+          {writers.map((writer) => (
+            <div data-developer data-name={writer.name} data-score={writer.score} data-issues={writer.issues.length}>
+              <WriterCard writer={writer} showBio />
+            </div>
+          ))}
+        </div>
+      </developer-sort>
     </section>
   </main>
   <SiteFooter />
 </BaseLayout>
+
+<script>
+  class DeveloperSort extends HTMLElement {
+    private controller = new AbortController();
+
+    connectedCallback() {
+      this.controller.abort();
+      this.controller = new AbortController();
+      const grid = this.querySelector<HTMLElement>(".writer-grid")!;
+      const cards = Array.from(grid.querySelectorAll<HTMLElement>("[data-developer]"));
+      const buttons = Array.from(this.querySelectorAll<HTMLButtonElement>("[data-sort]"));
+
+      buttons.forEach((button) => button.addEventListener("click", () => {
+        const sort = button.dataset.sort;
+        cards.sort((a, b) => {
+          const difference = sort === "issues"
+            ? Number(b.dataset.issues) - Number(a.dataset.issues)
+            : sort === "lowest"
+              ? Number(a.dataset.score) - Number(b.dataset.score)
+              : Number(b.dataset.score) - Number(a.dataset.score);
+          return difference || (a.dataset.name ?? "").localeCompare(b.dataset.name ?? "");
+        });
+        grid.append(...cards);
+        buttons.forEach((item) => {
+          const selected = item === button;
+          item.classList.toggle("chip--current", selected);
+          item.setAttribute("aria-pressed", String(selected));
+        });
+      }, { signal: this.controller.signal }));
+    }
+
+    disconnectedCallback() { this.controller.abort(); }
+  }
+  if (!customElements.get("developer-sort")) customElements.define("developer-sort", DeveloperSort);
+</script>
+
+<style>
+  developer-sort { display: block; }
+  .sort-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  button { cursor: pointer; font-family: inherit; }
+  [data-developer] { display: flex; }
+  [data-developer] :global(.writer-card) { width: 100%; }
+</style>

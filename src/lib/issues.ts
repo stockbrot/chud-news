@@ -42,7 +42,7 @@ export const developerScore = (issues: Issue[], name: string) =>
     .reduce((total, issue) => total + issue.data.score, 0);
 
 export const byTopic = (issues: Issue[], topic: Topic) =>
-  publishedIssues(issues).filter((issue) => issue.data.topic === topic);
+  publishedIssues(issues).filter((issue) => issue.data.topic.includes(topic));
 
 /** The issue the front page leads with: the flagged one, else the newest. */
 export const leadIssue = (issues: Issue[]) => {
@@ -69,7 +69,8 @@ export const relatedIssues = (issues: Issue[], current: Issue, limit = 3) =>
     .filter((issue) => issue.id !== current.id)
     .sort((a, b) => {
       const sameTopic =
-        Number(b.data.topic === current.data.topic) - Number(a.data.topic === current.data.topic);
+        b.data.topic.filter((topic) => current.data.topic.includes(topic)).length -
+        a.data.topic.filter((topic) => current.data.topic.includes(topic)).length;
       return sameTopic || byNewest(a, b);
     })
     .slice(0, limit);

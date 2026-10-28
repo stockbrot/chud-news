@@ -100,7 +100,7 @@ An issue is a folder under [src/content/issues](./src/content/issues) containing
 issue: 5
 title: "How to end an issue"
 excerpt: "Openings get all the advice. The last hundred words are what decides whether anyone replies."
-topic: "Craft"
+topic: ["Horror", "Survival"] # One or more genres from src/config/topics.ts; a single string also works.
 date: 2026-06-11
 updatedDate: 2026-06-20 # optional
 author:

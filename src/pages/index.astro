@@ -54,16 +54,19 @@ const topicCounts = topics
   <main id="content">
     <section class="container" id="subscribe" aria-labelledby="masthead-title">
       <div class="masthead">
-        <h1 class="t-display" id="masthead-title">{siteConfig.tagline}.</h1>
+        <p class="masthead__eyebrow">Gaming news / Reviews / Accountability</p>
+        <h1 class="t-display" id="masthead-title">{siteConfig.tagline.replace(/[.!?]+$/, "")}.</h1>
         <p class="t-lead">{siteConfig.bio}</p>
-        <SubscribeForm id="masthead-email" />
-        <p class="meta masthead__facts">
-          <span>{issues.length} issues</span>
-          <span class="dot-sep" aria-hidden="true"></span>
-          <span>{siteConfig.cadence}</span>
-          <span class="dot-sep" aria-hidden="true"></span>
-          <a class="link" href="/archive/">Read the archive</a>
-        </p>
+        <div class="masthead__aside">
+          <SubscribeForm id="masthead-email" />
+          <p class="meta masthead__facts">
+            <span>{issues.length} issues</span>
+            <span class="dot-sep" aria-hidden="true"></span>
+            <span>{siteConfig.cadence}</span>
+            <span class="dot-sep" aria-hidden="true"></span>
+            <a class="link" href="/topics/">Check the archive</a>
+          </p>
+        </div>
       </div>
     </section>
 
@@ -111,7 +114,7 @@ const topicCounts = topics
     {
       recent.length > 0 && (
         <section class="container section" aria-labelledby="recent-title">
-          <SectionHead title="Also recently" id="recent-title" href="/archive/" linkLabel="All posts" />
+          <SectionHead title="Also recently" id="recent-title" href="/topics/" linkLabel="All posts" />
           <div class="cards cards--2">
             {recent.map((issue) => (
               <IssueCard issue={issue} headingLevel="h3" />
@@ -128,7 +131,7 @@ const topicCounts = topics
             title="Back issues"
             id="ledger-title"
             note="Every post, numbered, newest first."
-            href="/archive/"
+            href="/topics/"
             linkLabel="Full archive"
           />
           <IssueIndex issues={ledger} />
