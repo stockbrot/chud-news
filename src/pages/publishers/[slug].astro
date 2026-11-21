@@ -1,0 +1,37 @@
+---
+import { getCollection } from "astro:content";
+import PageIntro from "@/components/PageIntro.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import IssueIndex from "@/components/IssueIndex.astro";
+import IssueScore from "@/components/IssueScore.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { allPublishers, publishedIssues, type PublisherSummary } from "@/lib/issues";
+import { scoring } from "@/lib/verdict/score";
+
+export async function getStaticPaths() {
+  const issues = publishedIssues(await getCollection("issues"));
+  return allPublishers(issues).map((publisher) => ({ params: { slug: publisher.slug }, props: { publisher } }));
+}
+
+const { publisher } = Astro.props as { publisher: PublisherSummary };
+const monetization = publisher.issues.flatMap((i) => i.data.verdict.monetization);
+---
+
+<BaseLayout title={publisher.name} description={`Every ${publisher.name} game we've scored, and their running total.`}>
+  <SiteHeader />
+  <main id="content">
+    <div class="container">
+      <PageIntro
+        title={publisher.name}
+        description={`Publisher. ${publisher.issues.length} game${publisher.issues.length === 1 ? "" : "s"} scored, ${monetization.length} monetization practice${monetization.length === 1 ? "" : "s"} flagged.`}
+      >
+        <p><IssueScore score={publisher.score} baseline={scoring.developerBase} signed={false} accessibleLabel={`${publisher.name} total`} /></p>
+      </PageIntro>
+    </div>
+    <section class="container section--tight">
+      <IssueIndex issues={publisher.issues} />
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>

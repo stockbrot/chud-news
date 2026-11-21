@@ -9,6 +9,7 @@ import IssueMeta from "@/components/IssueMeta.astro";
 import IssueScore from "@/components/IssueScore.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import IssueFooter from "@/components/IssueFooter.astro";
+import VerdictLedger from "@/components/VerdictLedger.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import SubscribePanel from "@/components/SubscribePanel.astro";
@@ -18,6 +19,8 @@ import { siteConfig } from "@/config/site";
 import {
   adjacentIssues,
   developerScore,
+  publisherScore,
+  writerSlug,
   issueHref,
   issueSlug,
   publishedIssues,
@@ -44,6 +47,7 @@ const { issue, issues } = Astro.props;
 const { Content } = await render(issue);
 const data = issue.data;
 const totalScore = developerScore(issues, data.author.name);
+const publisherTotal = data.selfPublished ? undefined : publisherScore(issues, data.publisher);
 
 const { newer, older } = adjacentIssues(issues, issue);
 const related = relatedIssues(issues, issue);
@@ -86,10 +90,10 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
           <dl class="issue-scores">
             <div>
               <dd><IssueScore score={data.score} /></dd>
-              <dt>This post</dt>
+              <dt>This game</dt>
             </div>
             <div>
-              <dt>Current total</dt>
+              <dt>{data.author.name}</dt>
               <dd>
                 <IssueScore
                   score={totalScore}
@@ -99,6 +103,21 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
                 />
               </dd>
             </div>
+            {
+              publisherTotal !== undefined && (
+                <div>
+                  <dt><a class="link" href={`/publishers/${writerSlug(data.publisher)}/`}>{data.publisher}</a></dt>
+                  <dd>
+                    <IssueScore
+                      score={publisherTotal}
+                      baseline={1000}
+                      signed={false}
+                      accessibleLabel={`${data.publisher} current total score`}
+                    />
+                  </dd>
+                </div>
+              )
+            }
           </dl>
         </header>
 
@@ -126,6 +145,7 @@ const structuredData = [issueSchema(issue, absoluteCover), issueBreadcrumbSchema
             <Content components={issueComponents} />
           </div>
           <ProseRuntime />
+          <VerdictLedger verdict={data.verdict} result={data.result} />
 
           <IssueFooter issue={issue} older={older} newer={newer} url={url} />
         </div>

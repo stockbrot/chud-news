@@ -1,0 +1,230 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import PageIntro from "@/components/PageIntro.astro";
+import { env } from "@/lib/server/env";
+import { listGames, statusLabel, type Game } from "@/lib/server/db";
+import { coverUrl } from "@/lib/pipeline/igdb";
+import { formatDate } from "@/lib/issues";
+
+export const prerender = false;
+
+const q = Astro.url.searchParams.get("q") ?? "";
+let games: Game[] = [];
+let total = 0;
+let offline = false;
+try {
+  ({ games, total } = await listGames(env.DB, { q, status: "active", limit: 50 }));
+} catch {
+  offline = true;
+}
+const siteKey = env.TURNSTILE_SITE_KEY;
+---
+
+<BaseLayout
+  title="Review queue"
+  description="Every game waiting for a verdict. Search it, see what's being worked on, and vote to push a game up the line."
+>
+  <SiteHeader />
+  <main id="content">
+    <div class="container">
+      <PageIntro
+        title="The queue"
+        description="Every game waiting for a verdict, newest and most wanted first. One vote per game per day bumps it up the line."
+      >
+        <form class="search-page-form" role="search" data-queue-search>
+          <label class="sr-only" for="queue-query">Search the queue</label>
+          <div class="field">
+            <input
+              id="queue-query"
+              class="field__input"
+              name="q"
+              type="search"
+              value={q}
+              placeholder="Game, developer or publisher…"
+              autocomplete="off"
+            />
+          </div>
+          <button type="submit" class="btn">Search</button>
+        </form>
+      </PageIntro>
+    </div>
+
+    <section class="container section--tight" aria-label="Queued games">
+      <p class="t-meta" role="status" aria-live="polite" data-queue-status>
+        {offline ? "The queue is offline right now." : `${total} game${total === 1 ? "" : "s"} in line.`}
+      </p>
+      <ol class="queue" data-queue-list>
+        {
+          games.map((game, index) => (
+            <li class="queue__row" data-status={game.status}>
+              <span class="queue__rank t-number">{index + 1}</span>
+              {game.cover_image_id ? (
+                <img class="queue__cover" src={coverUrl(game.cover_image_id, "cover_big")} alt="" loading="lazy" width="60" height="80" />
+              ) : (
+                <span class="queue__cover" />
+              )}
+              <div class="queue__main">
+                <h2 class="queue__title">{game.name}</h2>
+                <p class="t-meta">
+                  {[game.developers[0], game.publishers[0] !== game.developers[0] && game.publishers[0]].filter(Boolean).join(" · ")}
+                  {" · "}
+                  {formatDate(new Date(game.release_date))}
+                </p>
+              </div>
+              <span class="chip queue__status">{statusLabel[game.status]}</span>
+              <button type="button" class="btn btn--outline btn--sm queue__vote" data-vote={game.id} aria-label={`Vote for ${game.name}`}>
+                ▲ <span data-votes>{game.votes}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+      {siteKey && <div class="cf-turnstile" data-sitekey={siteKey} data-size="invisible" data-queue-turnstile />}
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>
+
+{siteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />}
+
+<script is:inline data-astro-rerun>
+  (() => {
+    const form = document.querySelector("[data-queue-search]");
+    const list = document.querySelector("[data-queue-list]");
+    const status = document.querySelector("[data-queue-status]");
+    if (!form || !list || !status) return;
+
+    const esc = (v) =>
+      String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+    const date = (iso) => new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+
+    const row = (g, i) =>
+      '<li class="queue__row" data-status="' + esc(g.status) + '"><span class="queue__rank t-number">' + (i + 1) +
+      "</span>" + (g.cover ? '<img class="queue__cover" src="' + esc(g.cover) + '" alt="" loading="lazy" width="60" height="80">' : '<span class="queue__cover"></span>') +
+      '<div class="queue__main"><h2 class="queue__title">' + esc(g.name) + '</h2><p class="t-meta">' +
+      esc([g.developers[0], g.publishers[0] !== g.developers[0] && g.publishers[0]].filter(Boolean).join(" · ")) + " · " + esc(date(g.releaseDate)) +
+      '</p></div><span class="chip queue__status">' + esc(g.statusLabel) +
+      '</span><button type="button" class="btn btn--outline btn--sm queue__vote" data-vote="' + g.id + '" aria-label="Vote for ' + esc(g.name) +
+      '">▲ <span data-votes>' + g.votes + "</span></button></li>";
+
+    let timer;
+    const search = async (q) => {
+      status.textContent = "Searching…";
+      const res = await fetch("/api/queue?q=" + encodeURIComponent(q));
+      const body = await res.json();
+      if (!res.ok) return (status.textContent = body.error || "Search failed.");
+      list.innerHTML = body.games.map(row).join("");
+      status.textContent = body.total + " game" + (body.total === 1 ? "" : "s") + (q ? ' matching "' + q + '"' : " in line") + ".";
+      history.replaceState(null, "", q ? "?q=" + encodeURIComponent(q) : location.pathname);
+    };
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      search(form.q.value.trim());
+    });
+    form.q.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => search(form.q.value.trim()), 250);
+    });
+
+    const turnstileToken = () =>
+      new Promise((resolve) => {
+        const el = document.querySelector("[data-queue-turnstile]");
+        if (!el || !window.turnstile) return resolve(undefined);
+        window.turnstile.reset(el);
+        window.turnstile.execute(el, { callback: resolve, "error-callback": () => resolve(undefined) });
+      });
+
+    list.addEventListener("click", async (e) => {
+      const button = e.target.closest("[data-vote]");
+      if (!button || button.disabled) return;
+      button.disabled = true;
+      const res = await fetch("/api/vote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gameId: Number(button.dataset.vote), token: await turnstileToken() }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok) button.querySelector("[data-votes]").textContent = body.votes;
+      button.title = res.ok ? "Voted. Come back tomorrow to vote again." : body.error || "Vote failed";
+      button.classList.toggle("is-voted", res.ok || res.status === 429);
+    });
+  })();
+</script>
+
+<style is:global>
+  [data-queue-search] {
+    display: flex;
+    gap: 0.5rem;
+    max-width: 32rem;
+  }
+  [data-queue-search] .field {
+    flex: 1;
+  }
+  [data-queue-search] .field__input {
+    width: 100%;
+  }
+  .queue {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .queue__row {
+    display: grid;
+    grid-template-columns: 2.25rem 3rem minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .queue__rank {
+    opacity: 0.6;
+    text-align: right;
+  }
+  .queue__cover {
+    width: 3rem;
+    height: 4rem;
+    object-fit: cover;
+    border-radius: var(--r-sm);
+    background: var(--surface-strong);
+  }
+  .queue__title {
+    font-size: 1.05rem;
+    margin: 0 0 0.15rem;
+    line-height: 1.25;
+  }
+  .queue__row[data-status="researching"] .queue__status,
+  .queue__row[data-status="drafted"] .queue__status,
+  .queue__row[data-status="in_review"] .queue__status {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .queue__vote.is-voted {
+    opacity: 0.6;
+  }
+  @media (max-width: 640px) {
+    .queue__row {
+      grid-template-columns: 3rem minmax(0, 1fr) auto;
+      grid-template-areas: "cover main vote" "cover status vote";
+      row-gap: 0.25rem;
+    }
+    .queue__rank {
+      display: none;
+    }
+    .queue__cover {
+      grid-area: cover;
+    }
+    .queue__main {
+      grid-area: main;
+    }
+    .queue__status {
+      grid-area: status;
+      justify-self: start;
+    }
+    .queue__vote {
+      grid-area: vote;
+    }
+  }
+</style>

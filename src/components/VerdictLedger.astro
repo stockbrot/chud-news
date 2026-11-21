@@ -1,0 +1,266 @@
+---
+import IssueScore from "@/components/IssueScore.astro";
+import type { ScoreResult } from "@/lib/verdict/score";
+import { scoring } from "@/lib/verdict/score";
+import type { Verdict, PromiseVerdict, MonetizationFlag, Evidence } from "@/lib/verdict/types";
+
+interface Props {
+  verdict: Verdict;
+  result: ScoreResult;
+}
+
+const { verdict, result } = Astro.props;
+
+const verdictLabel: Record<PromiseVerdict, string> = {
+  delivered: "Delivered",
+  delivered_late: "Delivered late",
+  partial: "Partly",
+  cut: "Cut",
+  misleading: "Misleading",
+  unverified: "Unverified",
+};
+const tone: Record<PromiseVerdict, string> = {
+  delivered: "positive",
+  delivered_late: "positive",
+  partial: "neutral",
+  cut: "negative",
+  misleading: "negative",
+  unverified: "neutral",
+};
+const flagLabel: Record<MonetizationFlag, string> = {
+  pay_to_win: "Pay to win",
+  loot_boxes: "Loot boxes",
+  cut_content_dlc: "Cut content sold as DLC",
+  marketed_content_paywalled: "Marketed content behind a paywall",
+  premium_with_mtx: "Microtransactions in a full-price game",
+  battle_pass_in_premium: "Battle pass in a full-price game",
+  preorder_exclusive_gameplay: "Pre-order exclusive content",
+  forced_online: "Online required for single-player",
+  currency_pack_mismatch: "Currency packs that never match prices",
+  content_removed: "Content removed after launch",
+  invasive_drm: "Invasive DRM",
+};
+
+const host = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "").replace(/^web\.archive\.org$/, "archive.org");
+  } catch {
+    return "source";
+  }
+};
+const sources = (items: Evidence[]) => items.filter((e) => e.url).slice(0, 3);
+const promises = [...verdict.promises].sort(
+  (a, b) => Number(a.verdict === "unverified") - Number(b.verdict === "unverified"),
+);
+---
+
+<section class="ledger" aria-labelledby="ledger-title">
+  <h2 id="ledger-title" class="t-h3">The receipts</h2>
+  <p class="t-small t-dim">
+    The score is calculated from these facts using the <a class="link" href="/scoring/">published formula</a> (v{scoring.version}).
+    Nobody picks the number. Release {verdict.releaseDate}{verdict.assessedPlatforms.length > 0 && <> · assessed on {verdict.assessedPlatforms.join(", ")}</>}{" "}
+    · confidence: {verdict.confidence}.
+  </p>
+
+  <table class="ledger__score">
+    <tbody>
+      {
+        result.lines.map((line) => (
+          <tr>
+            <th scope="row">{line.label}</th>
+            <td class="t-small t-dim">{line.detail}</td>
+            <td><IssueScore score={line.points} compact /></td>
+          </tr>
+        ))
+      }
+      {
+        result.repairCredit > 0 && (
+          <tr>
+            <th scope="row">Repair credit</th>
+            <td class="t-small t-dim">{verdict.repair?.summary}</td>
+            <td><IssueScore score={result.repairCredit} compact /></td>
+          </tr>
+        )
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row">{result.repairCredit > 0 ? "Current contribution" : "Launch verdict"}</th>
+        <td class="t-small t-dim">{result.repairCredit > 0 && `Original launch verdict: ${result.launch}`}</td>
+        <td><IssueScore score={result.current} /></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  {
+    promises.length > 0 && (
+      <>
+        <h3 class="t-h4">What they promised</h3>
+        <ul class="ledger__list">
+          {promises.map((p) => (
+            <li>
+              <span class:list={["ledger__badge", `ledger__badge--${tone[p.verdict]}`]}>{verdictLabel[p.verdict]}</span>
+              <div>
+                <p>
+                  {p.claim}
+                  {p.weight === "headline" && <span class="t-small t-dim"> · headline promise</span>}
+                </p>
+                <p class="t-small t-dim">
+                  Promised: <a class="link" href={p.source.url} rel="nofollow noopener">{host(p.source.url)}</a>
+                  {sources(p.evidence).length > 0 && (
+                    <>
+                      {" · "}Shipped:{" "}
+                      {sources(p.evidence).map((e, i) => (
+                        <>
+                          {i > 0 && ", "}
+                          <a class="link" href={e.url} rel="nofollow noopener">{host(e.url)}</a>
+                        </>
+                      ))}
+                    </>
+                  )}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  {
+    verdict.monetization.length > 0 && (
+      <>
+        <h3 class="t-h4">The money</h3>
+        <ul class="ledger__list">
+          {verdict.monetization.map((m) => (
+            <li>
+              <span class="ledger__badge ledger__badge--negative">{m.severity}</span>
+              <div>
+                <p>{flagLabel[m.flag]} <span class="t-small t-dim">· on the {m.owner}'s ledger</span></p>
+                <p class="t-small t-dim">
+                  {m.evidence.slice(0, 3).map((e, i) => (
+                    <>
+                      {i > 0 && ", "}
+                      <a class="link" href={e.url} rel="nofollow noopener">{host(e.url)}</a>
+                    </>
+                  ))}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+
+  {
+    verdict.stability.issues.length > 0 && (
+      <>
+        <h3 class="t-h4">Launch problems</h3>
+        <ul class="ledger__list ledger__list--plain">
+          {verdict.stability.issues.map((issue) => (
+            <li>
+              <p>
+                {issue.summary}
+                {issue.platforms && issue.platforms.length > 0 && <span class="t-small t-dim"> ({issue.platforms.join(", ")})</span>}
+              </p>
+              <p class="t-small t-dim">
+                {sources(issue.evidence).map((e, i) => (
+                  <>
+                    {i > 0 && ", "}
+                    <a class="link" href={e.url} rel="nofollow noopener">{host(e.url)}</a>
+                  </>
+                ))}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+  <p class="t-small t-dim">
+    Spotted a wrong fact? Tell us with a source and we'll correct it. Corrections that change the score are labelled.
+  </p>
+</section>
+
+<style>
+  .ledger {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    display: grid;
+    gap: 0.9rem;
+  }
+  .ledger__score {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .ledger__score th,
+  .ledger__score td {
+    padding: 0.5rem 0.25rem;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: middle;
+  }
+  .ledger__score th {
+    font-weight: 600;
+    white-space: nowrap;
+    padding-right: 1rem;
+  }
+  .ledger__score td:last-child {
+    text-align: right;
+  }
+  .ledger__score tfoot th,
+  .ledger__score tfoot td {
+    border-bottom: 0;
+    border-top: 2px solid var(--line-strong);
+  }
+  .ledger__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .ledger__list li {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: start;
+  }
+  .ledger__list--plain li {
+    grid-template-columns: 1fr;
+  }
+  .ledger__list p {
+    margin: 0;
+  }
+  .ledger__badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--r-full);
+    border: 1px solid var(--line-strong);
+    text-align: center;
+  }
+  .ledger__badge--positive {
+    background: var(--accent-soft);
+    color: var(--accent-soft-ink);
+    border-color: transparent;
+  }
+  .ledger__badge--negative {
+    background: var(--ink);
+    color: var(--page);
+    border-color: transparent;
+  }
+  @media (max-width: 520px) {
+    .ledger__list li {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+    .ledger__badge {
+      justify-self: start;
+    }
+  }
+</style>

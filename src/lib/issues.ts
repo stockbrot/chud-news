@@ -2,6 +2,7 @@ import type { CollectionEntry } from "astro:content";
 import { topics, topicSlug, type Topic } from "@/config/topics";
 import { siteConfig } from "@/config/site";
 import { writerRole } from "@/config/writers";
+import { developerContribution, publisherContribution, scoring } from "@/lib/verdict/score";
 
 export type Issue = CollectionEntry<"issues">;
 export { topics, topicSlug, type Topic };
@@ -35,11 +36,45 @@ const byNewest = (a: Issue, b: Issue) => b.data.date.getTime() - a.data.date.get
 export const publishedIssues = (issues: Issue[]) =>
   issues.filter((issue) => !issue.data.draft).sort(byNewest);
 
-/** Developer totals start at 1000 and include every published issue. */
+/**
+ * Developer totals start at 1000 and include every published game, minus the
+ * monetization calls their publisher made.
+ */
 export const developerScore = (issues: Issue[], name: string) =>
-  1000 + publishedIssues(issues)
+  scoring.developerBase +
+  publishedIssues(issues)
     .filter((issue) => writerSlug(issue.data.author.name) === writerSlug(name))
-    .reduce((total, issue) => total + issue.data.score, 0);
+    .reduce(
+      (total, issue) => total + developerContribution(issue.data.result, issue.data.selfPublished),
+      0,
+    );
+
+/** Publishers carry every game they put out, monetization included. */
+export const publisherScore = (issues: Issue[], name: string) =>
+  scoring.developerBase +
+  publishedIssues(issues)
+    .filter((issue) => writerSlug(issue.data.publisher) === writerSlug(name))
+    .reduce((total, issue) => total + publisherContribution(issue.data.result), 0);
+
+export interface PublisherSummary {
+  slug: string;
+  name: string;
+  issues: Issue[];
+  score: number;
+}
+
+export const allPublishers = (issues: Issue[]): PublisherSummary[] => {
+  const groups = new Map<string, { name: string; issues: Issue[] }>();
+  for (const issue of publishedIssues(issues)) {
+    const slug = writerSlug(issue.data.publisher);
+    const group = groups.get(slug) ?? { name: issue.data.publisher, issues: [] };
+    group.issues.push(issue);
+    groups.set(slug, group);
+  }
+  return [...groups.entries()]
+    .map(([slug, group]) => ({ slug, ...group, score: publisherScore(issues, group.name) }))
+    .sort((a, b) => a.score - b.score || a.name.localeCompare(b.name));
+};
 
 export const byTopic = (issues: Issue[], topic: Topic) =>
   publishedIssues(issues).filter((issue) => issue.data.topic.includes(topic));

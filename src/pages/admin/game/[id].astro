@@ -1,0 +1,228 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import IssueScore from "@/components/IssueScore.astro";
+import { env } from "@/lib/server/env";
+import { getGame, statusLabel, toDraft, type DraftRow } from "@/lib/server/db";
+import { computeScore } from "@/lib/verdict/score";
+import { coverUrl } from "@/lib/pipeline/igdb";
+
+export const prerender = false;
+
+const game = await getGame(env.DB, Number(Astro.params.id));
+if (!game) return new Response("Not found", { status: 404 });
+
+const rows = await env.DB.prepare("SELECT * FROM drafts WHERE game_id = ? ORDER BY id DESC LIMIT 10").bind(game.id).all<DraftRow>();
+const drafts = rows.results.map(toDraft);
+const draft = drafts[0];
+const score = draft?.ledger ? computeScore(draft.ledger) : undefined;
+const review = draft?.review;
+const hasAi = Boolean(env.ANTHROPIC_API_KEY);
+---
+
+<BaseLayout title={`Admin · ${game.name}`} noindex>
+  <main class="admin container">
+    <p><a class="link" href="/admin">← Dashboard</a></p>
+    <header class="game-head">
+      {game.cover_image_id && <img src={coverUrl(game.cover_image_id, "cover_big")} alt="" width="120" height="160" />}
+      <div>
+        <h1 class="t-h2">{game.name}</h1>
+        <p class="t-meta">
+          {game.developers.join(", ")} · published by {game.publishers.join(", ") || "?"} · {game.release_date} ·
+          {game.platforms.join(", ")}
+        </p>
+        <p class="t-meta">
+          Status: <span class="chip">{statusLabel[game.status]}</span> · {game.votes} votes · priority {game.priority}
+          {game.steam_app_id && <> · <a class="link" href={`https://store.steampowered.com/app/${game.steam_app_id}/`}>Steam</a></>}
+        </p>
+        <div class="game-actions" data-game={game.id} data-draft={draft?.id}>
+          <button class="btn btn--sm" data-act="research" disabled={!hasAi}>{draft ? "Re-research" : "Research"}</button>
+          <button class="btn btn--sm btn--outline" data-act="draft" disabled={!hasAi || !draft?.ledger}>Rewrite article</button>
+          <button class="btn btn--sm btn--outline" data-act="review" disabled={!hasAi || !draft?.body}>Fact-check</button>
+          <button class="btn btn--sm btn--outline" data-act="skip">Skip game</button>
+          <button class="btn btn--sm btn--outline" data-act="requeue">Back to queue</button>
+        </div>
+        <p class="t-small" data-msg></p>
+      </div>
+    </header>
+
+    {!draft && <p class="t-body">No draft yet. Hit Research to start.</p>}
+    {draft?.error && <p class="callout callout--danger">Last run failed: {draft.error}</p>}
+
+    {
+      draft && (
+        <div class="editor">
+          <section>
+            <h2 class="t-h3">Article</h2>
+            <label class="t-meta">Title<input class="field__input" name="title" value={draft.title ?? game.name} data-field /></label>
+            <label class="t-meta">Excerpt<input class="field__input" name="excerpt" value={draft.excerpt ?? ""} maxlength="200" data-field /></label>
+            <label class="t-meta">Body (Markdown)<textarea class="field__input" name="body" rows="24" data-field>{draft.body ?? ""}</textarea></label>
+          </section>
+
+          <section>
+            <h2 class="t-h3">Score {score && <IssueScore score={score.current} />}</h2>
+            {score && (
+              <table class="admin__table">
+                {score.lines.map((line) => (
+                  <tr><td>{line.label}</td><td class="t-number">{line.points}</td><td class="t-small t-dim">{line.detail}</td></tr>
+                ))}
+                {score.repairCredit > 0 && <tr><td>Repair credit</td><td class="t-number">+{score.repairCredit}</td><td /></tr>}
+              </table>
+            )}
+            <p class="t-small t-dim">Confidence: {draft.ledger?.confidence} · cost ${draft.cost_usd.toFixed(4)}</p>
+
+            <h2 class="t-h3">Fact-check</h2>
+            {review ? (
+              <div class:list={["callout", review.pass ? "callout--success" : "callout--warn"]}>
+                <strong>{review.pass ? "Passed" : "Needs work"}</strong> ({review.confidence} confidence)
+                {[["Unsupported claims", review.unsupportedClaims], ["Ledger concerns", review.ledgerConcerns], ["Tone", review.toneIssues], ["Suggested fixes", review.fixes]].map(
+                  ([label, items]) => (items as string[]).length > 0 && (
+                    <>
+                      <p class="t-small"><strong>{label}</strong></p>
+                      <ul class="t-small">{(items as string[]).map((item) => <li>{item}</li>)}</ul>
+                    </>
+                  ),
+                )}
+              </div>
+            ) : (
+              <p class="t-small t-dim">Not fact-checked yet.</p>
+            )}
+
+            <h2 class="t-h3">Ledger (JSON)</h2>
+            <p class="t-small t-dim">Edit verdicts, fix sources or add an editorial adjustment (±25, reason required). Score updates on save.</p>
+            <textarea class="field__input ledger" name="ledger" rows="28" spellcheck="false" data-field>{JSON.stringify(draft.ledger, null, 2)}</textarea>
+          </section>
+
+          <footer class="editor__foot" data-draft-actions data-draft={draft.id}>
+            <button class="btn btn--outline" data-act="save">Save edits</button>
+            <button class="btn" data-act="approve" disabled={!draft.body}>Approve & publish</button>
+            <button class="btn btn--outline" data-act="reject">Reject</button>
+          </footer>
+        </div>
+      )
+    }
+
+    {
+      drafts.length > 1 && (
+        <details>
+          <summary class="t-meta">Earlier attempts ({drafts.length - 1})</summary>
+          <ul class="t-small">
+            {drafts.slice(1).map((d) => <li>#{d.id} · {d.stage} · {d.created_at} · ${d.cost_usd.toFixed(4)} {d.error && `· ${d.error}`}</li>)}
+          </ul>
+        </details>
+      )
+    }
+  </main>
+</BaseLayout>
+
+<script is:inline data-astro-rerun>
+  (() => {
+    const msg = document.querySelector("[data-msg]");
+    const say = (text) => msg && (msg.textContent = text);
+    const post = async (url, body) => {
+      const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || res.statusText);
+      return data;
+    };
+    const fields = () => {
+      const out = {};
+      document.querySelectorAll("[data-field]").forEach((el) => (out[el.name] = el.value));
+      if (out.ledger) out.ledger = JSON.parse(out.ledger);
+      return out;
+    };
+
+    const game = document.querySelector("[data-game]");
+    const gameId = game?.dataset.game;
+    const draftId = game?.dataset.draft;
+
+    game?.addEventListener("click", async (e) => {
+      const act = e.target.closest("[data-act]")?.dataset.act;
+      if (!act) return;
+      try {
+        if (act === "research") {
+          say("Researching… (30–90s)");
+          const { draftId: id } = await post(`/api/admin/game/${gameId}`, { action: "research" });
+          say("Writing…");
+          await post(`/api/admin/draft/${id}`, { action: "draft" });
+          say("Fact-checking…");
+          await post(`/api/admin/draft/${id}`, { action: "review" });
+        } else if (act === "draft" || act === "review") {
+          say(act === "draft" ? "Writing…" : "Fact-checking…");
+          await post(`/api/admin/draft/${draftId}`, { action: act });
+        } else {
+          await post(`/api/admin/game/${gameId}`, { action: "status", status: act === "skip" ? "skipped" : "queued" });
+        }
+        location.reload();
+      } catch (error) {
+        say("Error: " + error.message);
+      }
+    });
+
+    document.querySelector("[data-draft-actions]")?.addEventListener("click", async (e) => {
+      const act = e.target.closest("[data-act]")?.dataset.act;
+      if (!act) return;
+      try {
+        if (act === "reject" && !confirm("Reject this draft and send the game back to the queue?")) return;
+        say(act === "approve" ? "Publishing…" : "Saving…");
+        const result = await post(`/api/admin/draft/${draftId}`, { action: act, ...(act === "reject" ? {} : fields()) });
+        if (act === "approve") {
+          alert(result.published ? `Committed to GitHub as ${result.folder}. The site rebuilds in a minute.` : `Approved. Run "npm run publish:approved" to write ${result.folder} locally, then push.`);
+        }
+        location.reload();
+      } catch (error) {
+        say("Error: " + error.message);
+        alert(error.message);
+      }
+    });
+  })();
+</script>
+
+<style is:global>
+  .game-head {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+  }
+  .game-head img {
+    border-radius: var(--r-sm);
+  }
+  .game-actions,
+  .editor__foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  .editor {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2rem;
+  }
+  .editor label {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .editor textarea {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    width: 100%;
+  }
+  .editor__foot {
+    grid-column: 1 / -1;
+    position: sticky;
+    bottom: 0;
+    background: var(--page);
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 900px) {
+    .editor {
+      grid-template-columns: 1fr;
+    }
+    .game-head {
+      flex-direction: column;
+    }
+  }
+</style>
