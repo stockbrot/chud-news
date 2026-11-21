@@ -1,0 +1,37 @@
+# Daily game discovery. Free: GitHub Actions calls the site's cron endpoint,
+# which pulls new releases from IGDB and walks one month of the backlog.
+# Needs repo secrets SITE_URL (https://your-site) and CRON_SECRET (same as the Worker's).
+name: Discover games
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: New releases (last 45 days)
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          offset=0
+          for page in $(seq 1 15); do
+            res=$(curl -sf -X POST -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/discover?mode=recent&offset=$offset")
+            echo "$res"
+            next=$(echo "$res" | jq -r '.nextOffset // empty')
+            [ -z "$next" ] && break
+            offset=$next
+          done
+      - name: Backlog (a few pages per day)
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          for page in $(seq 1 6); do
+            curl -sf -X POST -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/discover?mode=backlog" || break
+            echo
+          done

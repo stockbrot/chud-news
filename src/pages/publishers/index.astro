@@ -1,0 +1,45 @@
+---
+import { getCollection } from "astro:content";
+import PageIntro from "@/components/PageIntro.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import IssueScore from "@/components/IssueScore.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { allPublishers, publishedIssues } from "@/lib/issues";
+import { scoring } from "@/lib/verdict/score";
+
+const issues = publishedIssues(await getCollection("issues"));
+const publishers = allPublishers(issues);
+---
+
+<BaseLayout title="Publishers" description="Publishers ranked by what their games actually delivered, monetization included.">
+  <SiteHeader />
+  <main id="content">
+    <div class="container">
+      <PageIntro
+        title="Publishers"
+        description={`Publishers fund and market the game, and usually decide the monetization. Each starts at ${scoring.developerBase.toLocaleString("en-US")} and carries every game it puts out, worst first.`}
+        note={`${publishers.length} ${publishers.length === 1 ? "publisher" : "publishers"}`}
+      />
+    </div>
+    <section class="container section--tight">
+      <ol class="index">
+        {
+          publishers.map((p) => (
+            <li>
+              <a class="index__row" href={`/publishers/${p.slug}/`}>
+                <span class="index__no t-number">{p.issues.length}</span>
+                <div class="index__main">
+                  <h2 class="index__title">{p.name}</h2>
+                  <p class="index__excerpt">{p.issues.map((i) => i.data.title).join(", ")}</p>
+                </div>
+                <IssueScore score={p.score} baseline={scoring.developerBase} signed={false} />
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </main>
+  <SiteFooter />
+</BaseLayout>

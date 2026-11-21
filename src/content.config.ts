@@ -3,6 +3,8 @@ import { glob } from "astro/loaders";
 import { z } from "astro/zod";
 import { topics } from "@/config/topics";
 import { platforms } from "@/config/platforms";
+import { verdictSchema } from "@/lib/verdict/schema";
+import { computeScore } from "@/lib/verdict/score";
 
 const issues = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/issues" }),
@@ -21,12 +23,18 @@ const issues = defineCollection({
       platforms: z.array(z.enum(platforms)).default([])
         .transform((value) => [...new Set(value)]),
       updatedDate: z.coerce.date().optional(),
+      /** The developer. Developers are the "authors": every verdict lands on their ledger. */
       author: z.object({
         name: z.string(),
         /** Legacy field; displayed roles come from src/config/writers.ts. */
         role: z.string().optional(),
       }),
-      score: z.number().default(0),
+      /** Defaults to the developer, i.e. self-published. */
+      publisher: z.string().optional(),
+      igdbId: z.number().int().optional(),
+      steamAppId: z.number().int().optional(),
+      /** The fact ledger. The score is computed from it and can't be set by hand. */
+      verdict: verdictSchema,
       cover: z.object({
         src: image(),
         alt: z.string(),
@@ -36,6 +44,18 @@ const issues = defineCollection({
       /** Promotes the issue to the top of the front page, ahead of the newest one. */
       featured: z.boolean().default(false),
       draft: z.boolean().default(false),
+    })
+    .transform((data) => {
+      const result = computeScore(data.verdict);
+      const publisher = data.publisher ?? data.author.name;
+      return {
+        ...data,
+        publisher,
+        selfPublished: publisher === data.author.name,
+        result,
+        /** The game's current contribution, used everywhere a single number is shown. */
+        score: result.current,
+      };
     }),
 });
 

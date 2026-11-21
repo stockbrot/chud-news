@@ -1,0 +1,203 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { env } from "@/lib/server/env";
+import { listGames, statusLabel, statuses, type Status } from "@/lib/server/db";
+import { canCommit } from "@/lib/server/github";
+
+export const prerender = false;
+
+const statusParam = Astro.url.searchParams.get("status") ?? "active";
+const status = ([...statuses, "active", "all"] as string[]).includes(statusParam) ? statusParam : "active";
+const q = Astro.url.searchParams.get("q") ?? "";
+const page = Math.max(0, Number(Astro.url.searchParams.get("page") ?? 0));
+const { games, total } = await listGames(env.DB, { q, status: status as Status | "active" | "all", limit: 100, offset: page * 100 });
+const counts = await env.DB.prepare("SELECT status, COUNT(*) AS n FROM games GROUP BY status").all<{ status: Status; n: number }>();
+const spend = await env.DB.prepare("SELECT COALESCE(SUM(cost_usd), 0) AS total FROM drafts").first<{ total: number }>();
+const countOf = (s: string) => counts.results.find((c) => c.status === s)?.n ?? 0;
+const tabs = ["active", ...statuses, "all"];
+const hasAi = Boolean(env.ANTHROPIC_API_KEY);
+---
+
+<BaseLayout title="Dashboard" noindex>
+  <main class="admin container">
+    <header class="admin__head">
+      <h1 class="t-h2">Dashboard</h1>
+      <p class="t-meta">
+        AI spend so far: ${spend?.total.toFixed(3) ?? "0"} ·
+        {hasAi ? "Claude connected" : "⚠ ANTHROPIC_API_KEY not set"} ·
+        {canCommit(env) ? "Approvals commit to GitHub" : "Approvals stay local (run npm run publish:approved)"}
+      </p>
+    </header>
+
+    <nav class="admin__tabs">
+      {
+        tabs.map((tab) => (
+          <a class:list={["chip", tab === status && "chip--current"]} href={`?status=${tab}${q ? `&q=${encodeURIComponent(q)}` : ""}`}>
+            {tab === "active" ? "Active" : tab === "all" ? "All" : statusLabel[tab as Status]}
+            {tab !== "active" && tab !== "all" && <span class="chip__count">{countOf(tab)}</span>}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="admin__tools">
+      <form method="get" class="admin__search">
+        <input type="hidden" name="status" value={status} />
+        <input class="field__input" name="q" value={q} placeholder="Filter by name, developer, publisher" />
+        <button class="btn btn--sm">Filter</button>
+      </form>
+      <form class="admin__search" data-import>
+        <input class="field__input" name="q" placeholder="Add any game from IGDB…" />
+        <button class="btn btn--sm btn--outline">Find</button>
+      </form>
+    </div>
+    <ul class="admin__found" data-found></ul>
+
+    <p class="t-meta">{total} games · sorted by queue priority</p>
+    <table class="admin__table">
+      <thead>
+        <tr><th>#</th><th>Game</th><th>Released</th><th>Why</th><th>Votes</th><th>Priority</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        {
+          games.map((game, i) => (
+            <tr>
+              <td class="t-number">{page * 100 + i + 1}</td>
+              <td>
+                <a class="link" href={`/admin/game/${game.id}`}>{game.name}</a>
+                <div class="t-small t-dim">{[...new Set([...game.developers, ...game.publishers])].slice(0, 3).join(", ")}</div>
+              </td>
+              <td class="t-small">{game.release_date}</td>
+              <td class="t-small t-dim">{game.eligible_reason}</td>
+              <td class="t-number">{game.votes}</td>
+              <td class="t-number">{game.priority}</td>
+              <td><span class="chip">{statusLabel[game.status]}</span></td>
+              <td>
+                {(game.status === "queued" || game.status === "rejected") && (
+                  <button class="btn btn--sm" data-run={game.id} disabled={!hasAi}>Write it</button>
+                )}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+    <nav class="admin__pager">
+      {page > 0 && <a class="link" href={`?status=${status}&q=${encodeURIComponent(q)}&page=${page - 1}`}>← Previous</a>}
+      {(page + 1) * 100 < total && <a class="link" href={`?status=${status}&q=${encodeURIComponent(q)}&page=${page + 1}`}>Next →</a>}
+    </nav>
+  </main>
+</BaseLayout>
+
+<script is:inline data-astro-rerun>
+  (() => {
+    const post = async (url, body) => {
+      const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || res.statusText);
+      return data;
+    };
+
+    /* "Write it": research → draft → fact-check, then open the editor. */
+    document.querySelectorAll("[data-run]").forEach((button) =>
+      button.addEventListener("click", async () => {
+        const id = button.dataset.run;
+        try {
+          button.disabled = true;
+          button.textContent = "Researching…";
+          const { draftId } = await post(`/api/admin/game/${id}`, { action: "research" });
+          button.textContent = "Writing…";
+          await post(`/api/admin/draft/${draftId}`, { action: "draft" });
+          button.textContent = "Fact-checking…";
+          await post(`/api/admin/draft/${draftId}`, { action: "review" });
+          location.href = `/admin/game/${id}`;
+        } catch (error) {
+          button.textContent = "Failed";
+          button.title = error.message;
+          alert(error.message);
+        }
+      }),
+    );
+
+    const form = document.querySelector("[data-import]");
+    const found = document.querySelector("[data-found]");
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      found.innerHTML = "<li>Searching IGDB…</li>";
+      const res = await fetch("/api/admin/import?q=" + encodeURIComponent(form.q.value));
+      const results = await res.json();
+      if (!res.ok) return (found.innerHTML = "<li>" + results.error + "</li>");
+      found.innerHTML = "";
+      for (const g of results) {
+        const li = document.createElement("li");
+        li.textContent = `${g.name} (${g.year ?? "?"}) · ${[...g.developers, ...g.publishers].join(", ")} `;
+        const add = document.createElement("button");
+        add.className = "btn btn--sm btn--outline";
+        add.textContent = "Add to queue";
+        add.onclick = async () => {
+          await post("/api/admin/import", { igdbId: g.id });
+          location.href = `/admin/game/${g.id}`;
+        };
+        li.append(add);
+        found.append(li);
+      }
+    });
+  })();
+</script>
+
+<style is:global>
+  .admin {
+    padding-block: 2rem 4rem;
+  }
+  .admin__head {
+    margin-bottom: 1rem;
+  }
+  .admin__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .admin__tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .admin__search {
+    display: flex;
+    gap: 0.5rem;
+    flex: 1 1 18rem;
+  }
+  .admin__found {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .admin__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  .admin__table th,
+  .admin__table td {
+    text-align: left;
+    padding: 0.55rem 0.5rem;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .admin__pager {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+  @media (max-width: 760px) {
+    .admin__table th:nth-child(4),
+    .admin__table td:nth-child(4),
+    .admin__table th:nth-child(6),
+    .admin__table td:nth-child(6) {
+      display: none;
+    }
+  }
+</style>

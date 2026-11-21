@@ -1,5 +1,24 @@
 {
+  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "chud-news",
   "compatibility_date": "2026-07-09",
-  "pages_build_output_dir": "./dist",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "chud-news",
+      // Replace with the id printed by `npx wrangler d1 create chud-news`.
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    // owner/repo that approved verdicts are committed to (needs GITHUB_TOKEN secret).
+    "GITHUB_REPO": "stockbrot/chud-news",
+    "GITHUB_BRANCH": "main"
+  }
+  // Secrets (wrangler secret put NAME, or .dev.vars locally):
+  // IGDB_CLIENT_ID, IGDB_CLIENT_SECRET, ANTHROPIC_API_KEY, ADMIN_PASSWORD,
+  // CRON_SECRET, VOTE_SALT, and optionally GITHUB_TOKEN, TURNSTILE_SECRET.
 }

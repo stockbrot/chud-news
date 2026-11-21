@@ -3,10 +3,11 @@ import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
+import cloudflare from "@astrojs/cloudflare";
 import { siteConfig } from "./src/config/site.ts";
 import { codeThemes, codeDefaultColor } from "./src/config/code.ts";
 
-const noindexPages = ["/search/", "/styleguide/"];
+const noindexPages = ["/search/", "/styleguide/", "/queue/"];
 
 const shikiConfig = /** @type {const} */ ({
   themes: codeThemes,
@@ -15,11 +16,14 @@ const shikiConfig = /** @type {const} */ ({
 
 export default defineConfig({
   site: siteConfig.siteUrl,
+  /* Pages stay static; only the queue, voting, admin and API render on request. */
+  adapter: cloudflare({ imageService: "compile" }),
   integrations: [
     mdx(),
     sitemap({
       /* Listing a noindex page only earns a warning in Search Console. */
       filter: (page) =>
+        !page.includes("/admin") &&
         !noindexPages.some((path) => page === new URL(path, siteConfig.siteUrl).toString()),
     }),
   ],
